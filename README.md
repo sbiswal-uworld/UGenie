@@ -73,8 +73,6 @@ Expected output:
 2.1.114 (Claude Code)
 ```
 
-![Screenshot: Terminal showing claude --version output](screenshots/01-verify-claude-version.png)
-
 ---
 
 ## 3. Repository Structure
@@ -115,7 +113,7 @@ uworld-webgenie-commands/
 
 | Skill | Command | Role | What It Does |
 |---|---|---|---|
-| Page Audit | `/page-audit` | QA Engineers | Full SEO, images, links, schema, trademark audit on any URL |
+| Page Audit | `/page-audit` | QA Engineers | Full SEO, images, links, and schema audit on any URL |
 | CMS Formatter | `/cms-format` | CMS / Content | Converts raw CMS HTML to UWorld golden standard |
 | Content Match | `/content-match` | Content / QA | Compares brief/doc against live page, flags every discrepancy |
 | Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page |
@@ -136,8 +134,6 @@ git clone https://github.com/YOUR-ORG/uworld-webgenie-commands.git
 ```
 
 > Replace `YOUR-ORG` with your actual GitHub organization name.
-
-![Screenshot: Git clone command in Git Bash](screenshots/02-git-clone.png)
 
 ### Step 2 — Navigate Into the Folder
 
@@ -176,8 +172,6 @@ Installing skills...
 ══════════════════════════════════════════════════════
 ```
 
-![Screenshot: install.sh running successfully in terminal](screenshots/03-install-success.png)
-
 ### Step 4 — Open Claude Code and Verify
 
 Open a new terminal and run:
@@ -186,9 +180,7 @@ Open a new terminal and run:
 claude
 ```
 
-Type `/` — you should see all 7 skills appear in the autocomplete menu:
-
-![Screenshot: Claude Code showing / autocomplete with all 7 skills listed](screenshots/04-slash-autocomplete.png)
+Type `/` — you should see all 7 skills appear in the autocomplete menu.
 
 ---
 
@@ -207,9 +199,7 @@ Type `/` — you should see all 7 skills appear in the autocomplete menu:
 /page-audit https://www.uworld.com/blog/cfa-exam-tips pillar
 ```
 
-**Returns:** Overall score, section scores (SEO/Images/Links/Schema/Trademark), full image table, link table, trademark violations, QA checklist, and P1/P2/P3 fix list.
-
-![Screenshot: /page-audit running and returning a structured report](screenshots/05-page-audit-output.png)
+**Returns:** Overall score, section scores (SEO/Images/Links/Schema), full image table, link table, QA checklist, and P1/P2/P3 fix list.
 
 ---
 
@@ -232,8 +222,6 @@ C ) A measure of liquidity risk
 ```
 
 **Returns:** Clean UWorld-standard HTML with proper radio buttons, explanation structure, and MathJax script tag.
-
-![Screenshot: /cms-format converting CMS content to clean HTML](screenshots/06-cms-format-output.png)
 
 ---
 
@@ -394,8 +382,6 @@ cp skills/my-new-skill/SKILL.md ~/.claude/skills/my-new-skill/SKILL.md
 
 Open Claude Code and type `/my-new-skill` — it should appear immediately (no restart needed).
 
-![Screenshot: New skill appearing in / autocomplete](screenshots/07-new-skill-autocomplete.png)
-
 ---
 
 ## 8. How to Update Skills
@@ -539,22 +525,6 @@ page-audit/     table-compare/  visual-diff/
 | Frontend Developer | `/figma-to-code` `/feature-table` `/page-audit` |
 | CMS / Content Editor | `/cms-format` `/content-match` `/table-compare` |
 | Full-Stack Developer | `/page-audit` `/content-match` `/figma-to-code` |
-
----
-
-## Trademark Reference
-
-All skills enforce these UWorld trademark symbols:
-
-| Term | Required Form |
-|---|---|
-| CFA | CFA® |
-| StudyPass | StudyPass™ |
-| TotalPrep | TotalPrep™ |
-| FlexiPay | FlexiPay™ |
-| FreshStart | FreshStart™ |
-| ExpertConnect | ExpertConnect™ |
-| BootCamp | BootCamp™ |
 
 ---
 
