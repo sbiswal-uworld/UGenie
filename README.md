@@ -455,48 +455,8 @@ Changes are picked up **live** — no need to restart Claude Code.
 
 ---
 
-## 9. Sharing with Your Team
 
-### Option A — GitHub (Recommended)
-
-1. Create a private GitHub repository
-2. Push this folder to it:
-
-```bash
-git init
-git add .
-git commit -m "Initial WebGenie skills"
-git remote add origin https://github.com/YOUR-ORG/uworld-webgenie-commands.git
-git push -u origin main
-```
-
-3. Each team member runs **once**:
-
-```bash
-git clone https://github.com/YOUR-ORG/uworld-webgenie-commands.git
-cd uworld-webgenie-commands
-bash install.sh
-```
-
-4. When skills are updated, each team member runs:
-
-```bash
-cd uworld-webgenie-commands
-git pull
-bash update.sh
-```
-
-### Option B — Shared Network Drive
-
-Copy the folder to a shared drive. Each team member runs `bash install.sh` from the shared location.
-
-### Option C — USB / ZIP
-
-Share the zip file. Each member extracts and runs `bash install.sh`.
-
----
-
-## 10. Troubleshooting
+## 9. Troubleshooting
 
 ### ❌ "Unknown command: /page-audit"
 
@@ -562,14 +522,14 @@ figma-to-elementor/  page-audit/   table-compare/  visual-diff/
 
 ---
 
-## 11. Role Guide
+## 10. Role Guide
 
 | Role | Primary Skills |
 |---|---|
 | QA Engineer | `/page-audit` `/table-compare` `/visual-diff` `/content-match` |
-| Frontend Developer | `/figma-to-code` `/figma-to-elementor` `/feature-table` `/page-audit` |
-| CMS / Content Editor | `/cms-format` `/content-match` `/table-compare` |
-| Full-Stack Developer | `/page-audit` `/content-match` `/figma-to-code` |
+| Developers | `/figma-to-code` `/figma-to-elementor` `/feature-table` `/page-audit` |
+| QA Engineer & Devs | `/cms-format` `/content-match` `/table-compare` |
+| Developers | `/page-audit` `/content-match` `/figma-to-code` |
 
 ---
 
