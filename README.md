@@ -1,10 +1,10 @@
 # 🧠 UWorld WebGenie — Claude Code Skills
 
-> **8 production-ready Claude Code slash commands** for the UWorld web team.  
+> **7 production-ready Claude Code slash commands** for the UWorld web team.  
 > No API key. No extra cost. Works on every team member's machine instantly.
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-6B46C1?style=for-the-badge&logo=anthropic&logoColor=white)
-![Skills](https://img.shields.io/badge/Skills-8%20Commands-0066CC?style=for-the-badge)
+![Skills](https://img.shields.io/badge/Skills-7%20Commands-0066CC?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux-28A745?style=for-the-badge)
 
 ---
@@ -14,11 +14,14 @@
 1. [What Are Claude Code Skills?](#1-what-are-claude-code-skills)
 2. [Prerequisites](#2-prerequisites)
 3. [Repository Structure](#3-repository-structure)
-4. [The 8 Skills](#4-the-8-skills)
+4. [The 7 Skills](#4-the-7-skills)
 5. [Installation Guide](#5-installation-guide)
 6. [How to Use Each Skill](#6-how-to-use-each-skill)
 7. [How to Create a New Skill](#7-how-to-create-a-new-skill)
 8. [How to Update Skills](#8-how-to-update-skills)
+9. [Sharing with Your Team](#9-sharing-with-your-team)
+10. [Troubleshooting](#10-troubleshooting)
+11. [Role Guide](#11-role-guide)
 
 ---
 
@@ -81,7 +84,7 @@ uworld-webgenie-commands/
 ├── 📄 install.sh             ← Run once to install all skills
 ├── 📄 update.sh              ← Run after git pull to update
 │
-├── 📁 skills/                ← Source files for all 8 skills
+├── 📁 skills/                ← Source files for all 7 skills
 │   ├── page-audit/
 │   │   └── SKILL.md
 │   ├── cms-format/
@@ -93,8 +96,6 @@ uworld-webgenie-commands/
 │   ├── table-compare/
 │   │   └── SKILL.md
 │   ├── figma-to-code/
-│   │   └── SKILL.md
-│   ├── figma-to-elementor/
 │   │   └── SKILL.md
 │   └── feature-table/
 │       └── SKILL.md
@@ -108,17 +109,16 @@ uworld-webgenie-commands/
 
 ---
 
-## 4. The 8 Skills
+## 4. The 7 Skills
 
 | Skill | Command | Role | What It Does |
 |---|---|---|---|
 | Page Audit | `/page-audit` | QA Engineers | Full SEO, images, links, and schema audit on any URL |
 | CMS Formatter | `/cms-format` | CMS / Content | Converts raw CMS HTML to UWorld golden standard |
 | Content Match | `/content-match` | Content / QA | Compares brief/doc against live page, flags every discrepancy |
-| Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page (pixel-perfect fidelity scoring) |
+| Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page |
 | Table Compare | `/table-compare` | QA / Content | Cell-by-cell table comparison |
 | Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
-| **Figma to Elementor** | **`/figma-to-elementor`** | **Developers** | **Converts Figma designs to production-ready Elementor JSON for WordPress** |
 | Feature Table | `/feature-table` | Developers | Generates UWorld comparison table HTML |
 
 ---
@@ -130,11 +130,18 @@ uworld-webgenie-commands/
 Open **Git Bash** (Windows) or your terminal (Mac/Linux):
 
 ```bash
-git clone https://github.com/sbiswal-uworld/UGenie.git
-cd UGenie/uworld-webgenie-commands
+git clone https://github.com/YOUR-ORG/uworld-webgenie-commands.git
 ```
 
-### Step 2 — Run the Installer
+> Replace `YOUR-ORG` with your actual GitHub organization name.
+
+### Step 2 — Navigate Into the Folder
+
+```bash
+cd uworld-webgenie-commands
+```
+
+### Step 3 — Run the Installer
 
 ```bash
 bash install.sh
@@ -158,15 +165,14 @@ Installing skills...
   ✓     /visual-diff
   ✓     /table-compare
   ✓     /figma-to-code
-  ✓     /figma-to-elementor
   ✓     /feature-table
 
 ══════════════════════════════════════════════════════
-  Installation complete! 8 skills installed.
+  Installation complete! 7 skills installed.
 ══════════════════════════════════════════════════════
 ```
 
-### Step 3 — Open Claude Code and Verify
+### Step 4 — Open Claude Code and Verify
 
 Open a new terminal and run:
 
@@ -174,7 +180,7 @@ Open a new terminal and run:
 claude
 ```
 
-Type `/` — you should see all 8 skills appear in the autocomplete menu.
+Type `/` — you should see all 7 skills appear in the autocomplete menu.
 
 ---
 
@@ -241,15 +247,11 @@ Price: $399
 ### `/visual-diff` — Design vs Live Comparison
 
 ```
-/visual-diff <figma-url|file-key> <live-url>
+/visual-diff <live-url>
+[attach your Figma screenshot or design export]
 ```
 
-**Example:**
-```
-/visual-diff https://figma.com/design/a1b2c3d4/Design-File?node-id=123-456 https://live.uworld.com/page/
-```
-
-**Returns:** Fidelity scores per section, design token comparison, component inventory, full pixel-perfect diff report.
+**Returns:** Fidelity scores per section, design token comparison, full diff report.
 
 ---
 
@@ -287,46 +289,11 @@ LIVE TABLE (Page):
 
 ---
 
-### `/figma-to-elementor` — Figma to WordPress Elementor
-
-```
-/figma-to-elementor <figma-url|file-key> [node-id]
-```
-
-**Example:**
-```
-/figma-to-elementor https://figma.com/design/a1b2c3d4e5f6/UGenie?node-id=123-456
-```
-
-**What it does:**
-- Extracts all design tokens from Figma (colors, fonts, spacing, shadows, layout)
-- Generates production-ready Elementor JSON
-- Validates structure with pre-flight checklist
-- Includes responsive breakpoints (desktop, tablet, mobile)
-- Ready to import directly into WordPress Elementor
-
-**Returns:** Valid Elementor JSON export file + import instructions
-
-**Time savings:**
-- Manual Figma→Elementor: 4–6 hours per page
-- With this skill: 20–30 minutes per page
-- **10x faster** for landing pages, course pages, module layouts
-
----
-
 ### `/feature-table` — Comparison Table Generator
 
 ```
 /feature-table
 [paste feature comparison list]
-```
-
-**Example:**
-```
-/feature-table
-Core Plan: 2,800 questions, 5 mock exams, video lectures
-Advanced Plan: 3,500 questions, 10 mock exams, video lectures, flashcards
-Elite Plan: Full access + live Q&A, instructor sessions, coaching
 ```
 
 **Returns:** Desktop HTML table + mobile accordion HTML, both production-ready.
@@ -335,126 +302,243 @@ Elite Plan: Full access + live Q&A, instructor sessions, coaching
 
 ## 7. How to Create a New Skill
 
-1. Create a new directory: `skills/[skill-name]/`
-2. Create `SKILL.md` with YAML frontmatter:
+> Full guide: [docs/create-a-skill.md](docs/create-a-skill.md)
+
+### Step 1 — Create the Skill Directory
+
+```bash
+mkdir -p skills/my-new-skill
+```
+
+### Step 2 — Create the SKILL.md File
+
+```bash
+touch skills/my-new-skill/SKILL.md
+```
+
+### Step 3 — Add YAML Frontmatter (Required)
+
+Open the file and add this at the very top:
+
+```yaml
+---
+name: my-new-skill
+description: "One sentence describing what this skill does and when to use it."
+user-invokable: true
+argument-hint: "<required-arg> [optional-arg]"
+---
+```
+
+**Required fields:**
+
+| Field | Required | Description |
+|---|---|---|
+| `name` | ✅ Yes | The slash command name (no spaces, use hyphens) |
+| `description` | ✅ Yes | Shown in autocomplete. Claude also uses this to auto-trigger. |
+| `user-invokable` | ✅ Yes | Must be `true` for the user to invoke with `/` |
+| `argument-hint` | Optional | Shown as hint in autocomplete |
+
+### Step 4 — Write the Skill Instructions
+
+After the closing `---`, write your skill instructions in Markdown:
 
 ```markdown
 ---
-name: my-skill
-description: What this skill does (one line)
-author: Your Name
-version: 1.0.0
-category: development
+name: my-new-skill
+description: "Does X when Y happens."
 user-invokable: true
-argument-hint: "<arg1> [arg2]"
-license: MIT
+argument-hint: "<url>"
 ---
 
-# My Skill
+# My New Skill
 
-[Your skill content here...]
+You are a [role]. When the user provides [input], do [task].
+
+## Steps
+
+1. First do this
+2. Then do this
+3. Output in this format
+
+## Output Format
+
+[describe exact output structure]
 ```
 
-3. Run `bash update.sh` to sync to your local `~/.claude/skills/`
-4. Test with `/my-skill` in Claude Code
+### Step 5 — Install the New Skill
+
+```bash
+bash install.sh
+```
+
+Or manually copy it:
+
+```bash
+mkdir -p ~/.claude/skills/my-new-skill
+cp skills/my-new-skill/SKILL.md ~/.claude/skills/my-new-skill/SKILL.md
+```
+
+### Step 6 — Test It
+
+Open Claude Code and type `/my-new-skill` — it should appear immediately (no restart needed).
 
 ---
 
 ## 8. How to Update Skills
 
-After pulling the latest changes from GitHub:
+When a skill is updated in the repository:
 
 ```bash
-git pull origin main
+# Get latest changes
+git pull
+
+# Apply updates
 bash update.sh
 ```
 
-This copies all updated SKILL.md files to your local `~/.claude/skills/` directory and refreshes Claude Code's skill index.
+Output:
+```
+  ✓     /page-audit  (updated)
+  --    /cms-format  (no changes)
+  --    /content-match  (no changes)
+  ...
+  Done: 1 updated, 6 unchanged
+  Changes take effect immediately — no restart needed.
+```
+
+Changes are picked up **live** — no need to restart Claude Code.
 
 ---
 
-## 🚀 Common Workflows
+## 9. Sharing with Your Team
 
-### Workflow 1: Design → Live Page (Figma → WordPress)
-```
-Designer uploads Figma
-  ↓
-Run: /figma-to-elementor <figma-url>
-  ↓
-Get Elementor JSON export
-  ↓
-Import JSON into WordPress Elementor
-  ↓
-Test on staging server
-  ↓
-Publish to production
-```
-**Time:** Design → Live = ~30 min (vs. 6–8 hours manual)
+### Option A — GitHub (Recommended)
 
-### Workflow 2: Pre-Launch SEO Check
-```
-Page is designed & content drafted
-  ↓
-Run: /page-audit <staging-url>
-  ↓
-Get comprehensive SEO report + fix list
-  ↓
-Fix P1 issues (schema, meta description, alt text)
-  ↓
-Re-run /page-audit to verify
-  ↓
-Launch with confidence
-```
-**Time:** ~45 min → Catches 90% of SEO issues pre-launch
+1. Create a private GitHub repository
+2. Push this folder to it:
 
-### Workflow 3: Design QA (Figma vs Live)
+```bash
+git init
+git add .
+git commit -m "Initial WebGenie skills"
+git remote add origin https://github.com/YOUR-ORG/uworld-webgenie-commands.git
+git push -u origin main
 ```
-Page is live, design looks different
-  ↓
-Run: /visual-diff <figma-url> <live-url>
-  ↓
-Get component-by-component comparison
-  ↓
-Fidelity scoring + P1/P2/P3 issues flagged
-  ↓
-Prioritize design backlog
+
+3. Each team member runs **once**:
+
+```bash
+git clone https://github.com/YOUR-ORG/uworld-webgenie-commands.git
+cd uworld-webgenie-commands
+bash install.sh
 ```
-**Time:** ~30 min → Quantified design debt
+
+4. When skills are updated, each team member runs:
+
+```bash
+cd uworld-webgenie-commands
+git pull
+bash update.sh
+```
+
+### Option B — Shared Network Drive
+
+Copy the folder to a shared drive. Each team member runs `bash install.sh` from the shared location.
+
+### Option C — USB / ZIP
+
+Share the zip file. Each member extracts and runs `bash install.sh`.
 
 ---
 
-## 📚 Documentation
+## 10. Troubleshooting
 
-Each skill has complete documentation in its SKILL.md file:
-- Full methodology
-- Step-by-step process
-- Output format examples
-- Error handling
-- Key distinctions
+### ❌ "Unknown command: /page-audit"
 
----
+**Cause:** Flat `.md` files in `~/.claude/commands/` don't work. Skills must be in `~/.claude/skills/<name>/SKILL.md`.
 
-## 🤝 Contributing
+**Fix:**
+```bash
+bash install.sh
+```
 
-To contribute a new skill or improve an existing one:
-
-1. Create your skill in `uworld-webgenie-commands/skills/`
-2. Test with `/skill-name`
-3. Submit a pull request with clear description
-4. Update this README with the new skill in Section 4
+Then restart Claude Code.
 
 ---
 
-## 📝 License
+### ❌ Skill not showing in `/` autocomplete
 
-MIT License — All skills are open-source and free to use within UWorld development.
+**Cause 1:** Missing or malformed YAML frontmatter.
+
+**Fix:** Open the SKILL.md and verify the frontmatter block:
+```yaml
+---
+name: skill-name        ← must match folder name
+description: "..."      ← must be present
+user-invokable: true    ← must be exactly this
+---
+```
+
+**Cause 2:** New `~/.claude/skills/` directory didn't exist when session started.
+
+**Fix:** Restart Claude Code.
 
 ---
 
-## 👤 Author
+### ❌ "claude: command not found"
 
-**Sangram Biswal** — UWorld Web Engineering & SEO Optimization
+Claude Code is not installed or not in PATH.
+
+**Fix:** Install from [claude.ai/code](https://claude.ai/code), then restart your terminal.
 
 ---
 
-**Built with ❤️ for faster, smarter development.**
+### ❌ `bash install.sh` gives "Permission denied"
+
+**Fix:**
+```bash
+chmod +x install.sh update.sh
+bash install.sh
+```
+
+---
+
+### ✅ Verify Skills Are Installed
+
+```bash
+ls ~/.claude/skills/
+```
+
+Expected output:
+```
+cms-format/     content-match/  feature-table/  figma-to-code/
+page-audit/     table-compare/  visual-diff/
+```
+
+---
+
+## 11. Role Guide
+
+| Role | Primary Skills |
+|---|---|
+| QA Engineer | `/page-audit` `/table-compare` `/visual-diff` `/content-match` |
+| Frontend Developer | `/figma-to-code` `/feature-table` `/page-audit` |
+| CMS / Content Editor | `/cms-format` `/content-match` `/table-compare` |
+| Full-Stack Developer | `/page-audit` `/content-match` `/figma-to-code` |
+
+---
+
+## Contributing
+
+To add or update a skill:
+
+1. Create a branch: `git checkout -b add/skill-name`
+2. Add your skill under `skills/<skill-name>/SKILL.md`
+3. Test it locally with `bash install.sh`
+4. Open a pull request
+
+See [docs/create-a-skill.md](docs/create-a-skill.md) for the full authoring guide.
+
+---
+
+*Built for the UWorld web team · Powered by [Claude Code](https://claude.ai/code)*
