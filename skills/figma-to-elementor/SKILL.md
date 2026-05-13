@@ -11,9 +11,16 @@ Convert a Figma design to a pixel-perfect Elementor JSON file importable into Wo
 
 **Trigger:** `Implement this design from Figma. @https://www.figma.com/design/...`
 
-> **MANDATORY PREREQUISITE:** The Figma MCP must be connected before running this skill.
+> **MANDATORY PREREQUISITES:** Complete both steps before running this skill.
+>
+> **Step A — Connect Figma MCP:** The Figma MCP server must be active and connected.
 > Without it, design tokens (colors, spacing, fonts, shadows) cannot be accurately extracted.
-> Verify the connection by running `get_design_context` — if it fails, stop and ask the user to connect Figma MCP.
+>
+> **Step B — Configure Figma Access Token:** After connecting the MCP, a personal Figma access token must be configured.
+> In Claude Code settings (or your MCP config), set `FIGMA_ACCESS_TOKEN` to a valid token generated from your Figma account under **Account Settings → Security → Personal access tokens**.
+> The MCP server uses this token to authenticate API requests to Figma.
+>
+> Verify both by running `get_design_context` — if it fails, stop and ask the user to check both the MCP connection and the access token before proceeding.
 
 **Output directory:** `C:\Users\sbiswal\Downloads\Productivity Tool\Elementor JSON Exports\`
 
@@ -176,7 +183,7 @@ Always add `"view": "traditional"` on heading, button, and image widgets.
 
 ## Step 9 — Build Order
 
-1. Verify Figma MCP is connected (`get_design_context` returns data)
+1. Verify Figma MCP is connected and `FIGMA_ACCESS_TOKEN` is configured (`get_design_context` returns data)
 2. Parse Figma URL → extract `fileKey` and `nodeId`
 3. Call `get_design_context` and extract all design tokens
 4. Build JSON bottom-up: leaf widgets first → parent containers → root
