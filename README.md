@@ -19,9 +19,8 @@
 6. [How to Use Each Skill](#6-how-to-use-each-skill)
 7. [How to Create a New Skill](#7-how-to-create-a-new-skill)
 8. [How to Update Skills](#8-how-to-update-skills)
-9. [Sharing with Your Team](#9-sharing-with-your-team)
-10. [Troubleshooting](#10-troubleshooting)
-11. [Role Guide](#11-role-guide)
+9. [Troubleshooting](#10-troubleshooting)
+10. [Role Guide](#11-role-guide)
 
 ---
 
