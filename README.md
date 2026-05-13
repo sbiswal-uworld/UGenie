@@ -1,10 +1,10 @@
 # 🧠 UWorld WebGenie — Claude Code Skills
 
-> **7 production-ready Claude Code slash commands** for the UWorld web team.  
+> **8 production-ready Claude Code slash commands** for the UWorld web team.  
 > No API key. No extra cost. Works on every team member's machine instantly.
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-6B46C1?style=for-the-badge&logo=anthropic&logoColor=white)
-![Skills](https://img.shields.io/badge/Skills-7%20Commands-0066CC?style=for-the-badge)
+![Skills](https://img.shields.io/badge/Skills-8%20Commands-0066CC?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux-28A745?style=for-the-badge)
 
 ---
@@ -14,7 +14,7 @@
 1. [What Are Claude Code Skills?](#1-what-are-claude-code-skills)
 2. [Prerequisites](#2-prerequisites)
 3. [Repository Structure](#3-repository-structure)
-4. [The 7 Skills](#4-the-7-skills)
+4. [The 8 Skills](#4-the-8-skills)
 5. [Installation Guide](#5-installation-guide)
 6. [How to Use Each Skill](#6-how-to-use-each-skill)
 7. [How to Create a New Skill](#7-how-to-create-a-new-skill)
@@ -97,6 +97,8 @@ uworld-webgenie-commands/
 │   │   └── SKILL.md
 │   ├── figma-to-code/
 │   │   └── SKILL.md
+│   ├── figma-to-elementor/
+│   │   └── SKILL.md
 │   └── feature-table/
 │       └── SKILL.md
 │
@@ -109,7 +111,7 @@ uworld-webgenie-commands/
 
 ---
 
-## 4. The 7 Skills
+## 4. The 8 Skills
 
 | Skill | Command | Role | What It Does |
 |---|---|---|---|
@@ -119,6 +121,7 @@ uworld-webgenie-commands/
 | Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page |
 | Table Compare | `/table-compare` | QA / Content | Cell-by-cell table comparison |
 | Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
+| Figma to Elementor | `/figma-to-elementor` | Developers | Converts Figma design to pixel-perfect Elementor JSON — **requires Figma MCP** |
 | Feature Table | `/feature-table` | Developers | Generates UWorld comparison table HTML |
 
 ---
@@ -165,10 +168,11 @@ Installing skills...
   ✓     /visual-diff
   ✓     /table-compare
   ✓     /figma-to-code
+  ✓     /figma-to-elementor
   ✓     /feature-table
 
 ══════════════════════════════════════════════════════
-  Installation complete! 7 skills installed.
+  Installation complete! 8 skills installed.
 ══════════════════════════════════════════════════════
 ```
 
@@ -180,7 +184,7 @@ Open a new terminal and run:
 claude
 ```
 
-Type `/` — you should see all 7 skills appear in the autocomplete menu.
+Type `/` — you should see all 8 skills appear in the autocomplete menu.
 
 ---
 
@@ -286,6 +290,47 @@ LIVE TABLE (Page):
 ```
 
 **Returns:** Raw production-ready HTML+CSS, React component, or Tailwind HTML.
+
+---
+
+### `/figma-to-elementor` — Figma Design to Elementor JSON
+
+> **Connecting Figma MCP to Elementor is mandatory.**  
+> The Figma MCP must be active and connected before running this skill.  
+> It is the only way to accurately extract design tokens (colors, spacing, fonts, shadows, gradients).  
+> If `get_design_context` returns an error, stop and reconnect Figma MCP before proceeding.
+
+**Trigger phrase:**
+
+```
+Implement this design from Figma.
+@https://www.figma.com/design/...
+```
+
+**Example:**
+
+```
+Implement this design from Figma.
+@https://www.figma.com/design/AbCdEf123456/UWorld-Homepage?node-id=1-2
+```
+
+**What it does:**
+
+1. Parses the Figma URL to extract `fileKey` and `nodeId`
+2. Calls `get_design_context` via Figma MCP to extract every design token
+3. Builds Elementor JSON bottom-up (leaf widgets → containers → root)
+4. Runs the pre-flight checklist to validate JSON structure
+5. Saves the output file to `C:\Users\sbiswal\Downloads\Productivity Tool\Elementor JSON Exports\`
+
+**Returns:** A valid Elementor JSON file importable directly into WordPress via Elementor > Import.
+
+**Requirements:**
+
+| Requirement | Details |
+|---|---|
+| Figma MCP | Must be connected — skill will not proceed without it |
+| Figma URL | Must include `node-id` parameter pointing to the specific frame/section |
+| Output folder | `C:\Users\sbiswal\Downloads\Productivity Tool\Elementor JSON Exports\` must exist |
 
 ---
 
@@ -511,8 +556,8 @@ ls ~/.claude/skills/
 
 Expected output:
 ```
-cms-format/     content-match/  feature-table/  figma-to-code/
-page-audit/     table-compare/  visual-diff/
+cms-format/     content-match/      feature-table/  figma-to-code/
+figma-to-elementor/  page-audit/   table-compare/  visual-diff/
 ```
 
 ---
@@ -522,7 +567,7 @@ page-audit/     table-compare/  visual-diff/
 | Role | Primary Skills |
 |---|---|
 | QA Engineer | `/page-audit` `/table-compare` `/visual-diff` `/content-match` |
-| Frontend Developer | `/figma-to-code` `/feature-table` `/page-audit` |
+| Frontend Developer | `/figma-to-code` `/figma-to-elementor` `/feature-table` `/page-audit` |
 | CMS / Content Editor | `/cms-format` `/content-match` `/table-compare` |
 | Full-Stack Developer | `/page-audit` `/content-match` `/figma-to-code` |
 
