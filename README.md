@@ -19,9 +19,8 @@
 6. [How to Use Each Skill](#6-how-to-use-each-skill)
 7. [How to Create a New Skill](#7-how-to-create-a-new-skill)
 8. [How to Update Skills](#8-how-to-update-skills)
-9. [Sharing with Your Team](#9-sharing-with-your-team)
-10. [Troubleshooting](#10-troubleshooting)
-11. [Role Guide](#11-role-guide)
+9. [Troubleshooting](#9-troubleshooting)
+10. [Role Guide](#10-role-guide)
 
 ---
 
@@ -295,10 +294,15 @@ LIVE TABLE (Page):
 
 ### `/figma-to-elementor` — Figma Design to Elementor JSON
 
-> **Connecting Figma MCP to Elementor is mandatory.**  
-> The Figma MCP must be active and connected before running this skill.  
-> It is the only way to accurately extract design tokens (colors, spacing, fonts, shadows, gradients).  
-> If `get_design_context` returns an error, stop and reconnect Figma MCP before proceeding.
+> **Two mandatory prerequisites must be completed before running this skill.**
+>
+> **Step A — Connect Figma MCP:** The Figma MCP server must be active and connected.
+> It is the only way to accurately extract design tokens (colors, spacing, fonts, shadows, gradients).
+>
+> **Step B — Configure Figma Access Token:** After connecting the MCP, set `FIGMA_ACCESS_TOKEN` to a valid personal access token generated from your Figma account under **Account Settings → Security → Personal access tokens**.
+> The MCP uses this token to authenticate all API requests to Figma.
+>
+> If `get_design_context` returns an error, stop and verify both the MCP connection and the access token before proceeding.
 
 **Trigger phrase:**
 
@@ -316,11 +320,12 @@ Implement this design from Figma.
 
 **What it does:**
 
-1. Parses the Figma URL to extract `fileKey` and `nodeId`
-2. Calls `get_design_context` via Figma MCP to extract every design token
-3. Builds Elementor JSON bottom-up (leaf widgets → containers → root)
-4. Runs the pre-flight checklist to validate JSON structure
-5. Saves the output file to `C:\Users\sbiswal\Downloads\Productivity Tool\Elementor JSON Exports\`
+1. Verifies Figma MCP is connected and `FIGMA_ACCESS_TOKEN` is configured
+2. Parses the Figma URL to extract `fileKey` and `nodeId`
+3. Calls `get_design_context` via Figma MCP to extract every design token
+4. Builds Elementor JSON bottom-up (leaf widgets → containers → root)
+5. Runs the pre-flight checklist to validate JSON structure
+6. Saves the output file to `C:\Users\sbiswal\Downloads\Productivity Tool\Elementor JSON Exports\`
 
 **Returns:** A valid Elementor JSON file importable directly into WordPress via Elementor > Import.
 
@@ -329,6 +334,7 @@ Implement this design from Figma.
 | Requirement | Details |
 |---|---|
 | Figma MCP | Must be connected — skill will not proceed without it |
+| Figma Access Token | `FIGMA_ACCESS_TOKEN` must be set in your MCP config (Figma → Account Settings → Security → Personal access tokens) |
 | Figma URL | Must include `node-id` parameter pointing to the specific frame/section |
 | Output folder | `C:\Users\sbiswal\Downloads\Productivity Tool\Elementor JSON Exports\` must exist |
 
@@ -455,48 +461,7 @@ Changes are picked up **live** — no need to restart Claude Code.
 
 ---
 
-## 9. Sharing with Your Team
-
-### Option A — GitHub (Recommended)
-
-1. Create a private GitHub repository
-2. Push this folder to it:
-
-```bash
-git init
-git add .
-git commit -m "Initial WebGenie skills"
-git remote add origin https://github.com/YOUR-ORG/uworld-webgenie-commands.git
-git push -u origin main
-```
-
-3. Each team member runs **once**:
-
-```bash
-git clone https://github.com/YOUR-ORG/uworld-webgenie-commands.git
-cd uworld-webgenie-commands
-bash install.sh
-```
-
-4. When skills are updated, each team member runs:
-
-```bash
-cd uworld-webgenie-commands
-git pull
-bash update.sh
-```
-
-### Option B — Shared Network Drive
-
-Copy the folder to a shared drive. Each team member runs `bash install.sh` from the shared location.
-
-### Option C — USB / ZIP
-
-Share the zip file. Each member extracts and runs `bash install.sh`.
-
----
-
-## 10. Troubleshooting
+## 9. Troubleshooting
 
 ### ❌ "Unknown command: /page-audit"
 
@@ -562,7 +527,7 @@ figma-to-elementor/  page-audit/   table-compare/  visual-diff/
 
 ---
 
-## 11. Role Guide
+## 10. Role Guide
 
 | Role | Primary Skills |
 |---|---|
