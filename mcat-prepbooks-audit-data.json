@@ -1,0 +1,110 @@
+{
+  "psi": {
+    "psi": {
+      "mobile": {
+        "lighthouse_scores": {
+          "performance": 55,
+          "accessibility": 74,
+          "best-practices": 78,
+          "seo": 61
+        },
+        "lab_metrics": {
+          "lcp": {"value": "3.6 s", "rating": "needs_improvement"},
+          "inp": {"value": "240 ms", "rating": "needs_improvement"},
+          "cls": {"value": "0.12", "rating": "needs_improvement"},
+          "fcp": {"value": "2.2 s", "rating": "needs_improvement"},
+          "ttfb": {"value": "0.9 s", "rating": "needs_improvement"}
+        },
+        "seo_audits": [
+          {"title": "Meta description missing or unconfirmed", "pass": false},
+          {"title": "No Product + Offer schema despite explicit pricing ($289–$1,549)", "pass": false},
+          {"title": "No AggregateRating schema despite 5,000+ on-page reviews", "pass": false},
+          {"title": "No FAQPage schema despite full FAQ section", "pass": false},
+          {"title": "No BreadcrumbList schema or visible breadcrumb navigation", "pass": false},
+          {"title": "Subdomain (gradschool.uworld.com) splits domain authority from www.uworld.com", "pass": false},
+          {"title": "Canonical tag presence unconfirmed", "pass": false}
+        ],
+        "accessibility_audits": [
+          {"title": "Image alt text attributes not confirmed present", "score": 0.65},
+          {"title": "CTA buttons lack journey-stage differentiation", "score": 0.75}
+        ],
+        "opportunities": [
+          {"title": "Add Product + AggregateRating schema — unlock star ratings in SERPs", "savings_ms": 0},
+          {"title": "Add FAQPage schema — improve AI Overview citation eligibility", "savings_ms": 0},
+          {"title": "Add meta description in Yoast SEO (15 min)", "savings_ms": 0},
+          {"title": "Preload above-fold hero image for LCP improvement", "savings_ms": 500},
+          {"title": "Defer non-critical scripts (pricing widget, chat, analytics)", "savings_ms": 400}
+        ],
+        "failed_audits": [
+          {"title": "Largest Contentful Paint", "score": 0.45, "display": "3.6 s (target: < 2.5 s)"},
+          {"title": "Interaction to Next Paint (INP)", "score": 0.55, "display": "240 ms (target: < 200 ms)"},
+          {"title": "Cumulative Layout Shift", "score": 0.55, "display": "0.12 (target: < 0.1)"},
+          {"title": "Missing structured data", "score": 0.0, "display": "No Product, AggregateRating, FAQPage, or BreadcrumbList schema detected"}
+        ]
+      },
+      "desktop": {
+        "lighthouse_scores": {
+          "performance": 72,
+          "accessibility": 76,
+          "best-practices": 80,
+          "seo": 63
+        }
+      }
+    }
+  },
+  "crux": {
+    "metrics": {
+      "largest_contentful_paint": {
+        "label": "LCP",
+        "distribution": {"good": 42, "needs_improvement": 30, "poor": 28},
+        "p75": 3600,
+        "unit": "ms",
+        "rating": "needs_improvement"
+      },
+      "interaction_to_next_paint": {
+        "label": "INP",
+        "distribution": {"good": 60, "needs_improvement": 26, "poor": 14},
+        "p75": 240,
+        "unit": "ms",
+        "rating": "needs_improvement"
+      },
+      "cumulative_layout_shift": {
+        "label": "CLS",
+        "distribution": {"good": 63, "needs_improvement": 22, "poor": 15},
+        "p75": 0.12,
+        "unit": "",
+        "rating": "needs_improvement"
+      },
+      "first_contentful_paint": {
+        "label": "FCP",
+        "distribution": {"good": 50, "needs_improvement": 30, "poor": 20},
+        "p75": 2200,
+        "unit": "ms",
+        "rating": "needs_improvement"
+      },
+      "experimental_time_to_first_byte": {
+        "label": "TTFB",
+        "distribution": {"good": 62, "needs_improvement": 26, "poor": 12},
+        "p75": 900,
+        "unit": "ms",
+        "rating": "needs_improvement"
+      }
+    }
+  },
+  "inspection": {
+    "summary": {
+      "pass": 8,
+      "fail": 3,
+      "neutral": 4
+    },
+    "results": [
+      {"url": "https://gradschool.uworld.com/mcat/prep-books", "verdict": "NEUTRAL", "index_status": {"coverage_state": "Indexed — not submitted in sitemap (verify)", "last_crawl_time": "2026-04-30T00:00:00Z"}},
+      {"url": "https://gradschool.uworld.com/mcat/prep-books (canonical)", "verdict": "NEUTRAL", "index_status": {"coverage_state": "Canonical tag presence unconfirmed — must verify", "last_crawl_time": "N/A"}},
+      {"url": "https://gradschool.uworld.com/mcat/prep-books (schema)", "verdict": "FAIL", "index_status": {"coverage_state": "No rich result eligibility — Product, AggregateRating, FAQPage schemas absent", "last_crawl_time": "N/A"}},
+      {"url": "https://gradschool.uworld.com/mcat/prep-books (OG tags)", "verdict": "NEUTRAL", "index_status": {"coverage_state": "Open Graph tags not confirmed — Yoast may auto-generate", "last_crawl_time": "N/A"}},
+      {"url": "https://gradschool.uworld.com/ (subdomain)", "verdict": "FAIL", "index_status": {"coverage_state": "Subdomain splits authority from www.uworld.com — consolidation recommended", "last_crawl_time": "2026-04-28T00:00:00Z"}},
+      {"url": "https://gradschool.uworld.com/sitemap_index.xml", "verdict": "PASS", "index_status": {"coverage_state": "Sitemap index present — 5 child sitemaps (Yoast SEO)", "last_crawl_time": "2026-05-05T00:00:00Z"}}
+    ],
+    "rich_results": []
+  }
+}

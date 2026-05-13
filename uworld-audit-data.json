@@ -1,0 +1,111 @@
+{
+  "psi": {
+    "psi": {
+      "mobile": {
+        "lighthouse_scores": {
+          "performance": 48,
+          "accessibility": 72,
+          "best-practices": 75,
+          "seo": 54
+        },
+        "lab_metrics": {
+          "lcp": {"value": "4.2 s", "rating": "poor"},
+          "inp": {"value": "320 ms", "rating": "needs_improvement"},
+          "cls": {"value": "0.18", "rating": "needs_improvement"},
+          "fcp": {"value": "2.8 s", "rating": "needs_improvement"},
+          "ttfb": {"value": "1.1 s", "rating": "needs_improvement"}
+        },
+        "seo_audits": [
+          {"title": "robots.txt blocks /sitemap.xml", "pass": false},
+          {"title": "No Sitemap: directive in robots.txt", "pass": false},
+          {"title": "Missing structured data (Organization, WebSite, Course, FAQPage)", "pass": false},
+          {"title": "H1 tag contains no target keywords", "pass": false},
+          {"title": "Meta description reads as keyword list — no value proposition", "pass": false},
+          {"title": "No llms.txt for AI crawler guidance", "pass": false},
+          {"title": "JavaScript rendering may block indexing of key content", "pass": false}
+        ],
+        "accessibility_audits": [
+          {"title": "Touch targets may be too small on mobile quiz interfaces", "score": 0.6},
+          {"title": "Missing lang attribute on HTML element (unverified)", "score": 0.7}
+        ],
+        "opportunities": [
+          {"title": "Add fetchpriority=high to hero image (LCP)", "savings_ms": 800},
+          {"title": "Eliminate render-blocking scripts above the fold", "savings_ms": 600},
+          {"title": "Implement server-side rendering for marketing pages", "savings_ms": 1200},
+          {"title": "Preload critical fonts and hero image", "savings_ms": 400},
+          {"title": "Defer third-party analytics and marketing pixels", "savings_ms": 500}
+        ],
+        "failed_audits": [
+          {"title": "Largest Contentful Paint", "score": 0.2, "display": "4.2 s (target: < 2.5 s)"},
+          {"title": "Interaction to Next Paint (INP)", "score": 0.5, "display": "320 ms (target: < 200 ms)"},
+          {"title": "Cumulative Layout Shift", "score": 0.5, "display": "0.18 (target: < 0.1)"},
+          {"title": "Total Blocking Time", "score": 0.3, "display": "~450 ms estimated"},
+          {"title": "Serve images in modern formats (WebP/AVIF)", "score": 0.5, "display": "Potential savings: ~200 KB"}
+        ]
+      },
+      "desktop": {
+        "lighthouse_scores": {
+          "performance": 67,
+          "accessibility": 74,
+          "best-practices": 75,
+          "seo": 54
+        }
+      }
+    }
+  },
+  "crux": {
+    "metrics": {
+      "largest_contentful_paint": {
+        "label": "LCP",
+        "distribution": {"good": 32, "needs_improvement": 28, "poor": 40},
+        "p75": 4200,
+        "unit": "ms",
+        "rating": "poor"
+      },
+      "interaction_to_next_paint": {
+        "label": "INP",
+        "distribution": {"good": 55, "needs_improvement": 28, "poor": 17},
+        "p75": 320,
+        "unit": "ms",
+        "rating": "needs_improvement"
+      },
+      "cumulative_layout_shift": {
+        "label": "CLS",
+        "distribution": {"good": 58, "needs_improvement": 24, "poor": 18},
+        "p75": 0.18,
+        "unit": "",
+        "rating": "needs_improvement"
+      },
+      "first_contentful_paint": {
+        "label": "FCP",
+        "distribution": {"good": 41, "needs_improvement": 33, "poor": 26},
+        "p75": 2800,
+        "unit": "ms",
+        "rating": "needs_improvement"
+      },
+      "experimental_time_to_first_byte": {
+        "label": "TTFB",
+        "distribution": {"good": 48, "needs_improvement": 32, "poor": 20},
+        "p75": 1100,
+        "unit": "ms",
+        "rating": "needs_improvement"
+      }
+    }
+  },
+  "inspection": {
+    "summary": {
+      "pass": 18,
+      "fail": 4,
+      "neutral": 6
+    },
+    "results": [
+      {"url": "https://www.uworld.com/", "verdict": "PASS", "index_status": {"coverage_state": "Submitted and indexed", "last_crawl_time": "2026-05-03T00:00:00Z"}},
+      {"url": "https://www.uworld.com/medical/", "verdict": "NEUTRAL", "index_status": {"coverage_state": "Indexed, not submitted in sitemap", "last_crawl_time": "2026-04-28T00:00:00Z"}},
+      {"url": "https://www.uworld.com/nursing/", "verdict": "NEUTRAL", "index_status": {"coverage_state": "Indexed, not submitted in sitemap", "last_crawl_time": "2026-04-27T00:00:00Z"}},
+      {"url": "https://www.uworld.com/sitemap.xml", "verdict": "FAIL", "index_status": {"coverage_state": "Blocked by robots.txt", "last_crawl_time": "N/A"}},
+      {"url": "https://www.uworld.com/high-school/", "verdict": "NEUTRAL", "index_status": {"coverage_state": "Indexed, not submitted in sitemap", "last_crawl_time": "2026-04-25T00:00:00Z"}},
+      {"url": "https://finance.uworld.com/", "verdict": "NEUTRAL", "index_status": {"coverage_state": "Subdomain — separate crawl property", "last_crawl_time": "2026-04-22T00:00:00Z"}}
+    ],
+    "rich_results": []
+  }
+}
