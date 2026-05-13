@@ -83,8 +83,8 @@ Or open the artifact directly in Claude:
 | Resource | Link |
 |---|---|
 | GitHub Repository | [github.com/sbiswal-uworld/UGenie](https://github.com/sbiswal-uworld/UGenie) |
-| Demo Video | [Watch on Google Drive](YOUR_DEMO_VIDEO_DRIVE_LINK) |
-| All Assets (Drive) | [UGenie Assets Folder](YOUR_ASSETS_DRIVE_LINK) |
+| Demo Video | [Watch on Google Drive](https://drive.google.com/file/d/18cSRBRn0QGqgeIUbRLZX28kUFU8Yfaby/view?usp=drive_link) |
+| Figma to Elementor Assets | [Open Google Drive Folder](https://drive.google.com/drive/folders/1bIlt2G6ZKZ0a2tWTOUGqjvL8lu4F8ydt) |
 
 ---
 
