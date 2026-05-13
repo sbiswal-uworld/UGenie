@@ -1,7 +1,7 @@
 ---
 name: visual-diff
 description: Compare Figma design against live UWorld page using Figma MCP and live page screenshots — layout, typography, color, spacing, components with precision fidelity scores. Use for design-to-code QA, mockup validation, and component consistency checks.
-author: AgriciDaniel
+author: Sangram Biswal
 version: 2.0.0
 category: seo
 user-invokable: true
