@@ -2,7 +2,6 @@
 name: gdoc-to-html
 description: "Convert pasted Google Doc or Word content into clean UWorld-standard HTML using the Golden Prompt rule set. Use when a user pastes raw document text or HTML and says 'convert this' or 'format this to HTML'."
 user-invokable: true
-argument-hint: "[paste Google Doc / Word content below]"
 ---
 
 # Google Doc / Word → HTML Conversion Skill
