@@ -31,7 +31,7 @@ No extra API key. No extra subscription. Works instantly on every team member's 
 | Command | Who Uses It | What It Does |
 |---|---|---|
 | `/page-audit` | QA Engineers | Full SEO, images, links, and schema audit on any URL |
-| `/cms-format` | CMS / Content | Converts raw CMS HTML to UWorld golden standard |
+| `/cms-format` | CMS / Content | Converts raw CMS questions to UWorld Sample Questions Format |
 | `/content-match` | Content / QA | Compares brief vs live page, flags every discrepancy |
 | `/visual-diff` | QA / Dev | Scores Figma design vs live page section by section |
 | `/table-compare` | QA / Content | Cell-by-cell comparison with MATCH / WRONG / MISSING |
