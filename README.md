@@ -1,10 +1,10 @@
 # 🧠 UWorld WebGenie — Claude Code Skills
 
-> **8 production-ready Claude Code slash commands** for the UWorld web team.  
+> **9 production-ready Claude Code slash commands** for the UWorld web team.  
 > No API key. No extra cost. Works on every team member's machine instantly.
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-6B46C1?style=for-the-badge&logo=anthropic&logoColor=white)
-![Skills](https://img.shields.io/badge/Skills-8%20Commands-0066CC?style=for-the-badge)
+![Skills](https://img.shields.io/badge/Skills-9%20Commands-0066CC?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux-28A745?style=for-the-badge)
 
 ---
@@ -14,7 +14,7 @@
 1. [What Are Claude Code Skills?](#1-what-are-claude-code-skills)
 2. [Prerequisites](#2-prerequisites)
 3. [Repository Structure](#3-repository-structure)
-4. [The 8 Skills](#4-the-8-skills)
+4. [The 9 Skills](#4-the-9-skills)
 5. [Installation Guide](#5-installation-guide)
 6. [How to Use Each Skill](#6-how-to-use-each-skill)
 7. [How to Create a New Skill](#7-how-to-create-a-new-skill)
@@ -83,7 +83,7 @@ uworld-webgenie-commands/
 ├── 📄 install.sh             ← Run once to install all skills
 ├── 📄 update.sh              ← Run after git pull to update
 │
-├── 📁 skills/                ← Source files for all 7 skills
+├── 📁 skills/                ← Source files for all 9 skills
 │   ├── page-audit/
 │   │   └── SKILL.md
 │   ├── cms-format/
@@ -98,7 +98,9 @@ uworld-webgenie-commands/
 │   │   └── SKILL.md
 │   ├── figma-to-elementor/
 │   │   └── SKILL.md
-│   └── feature-table/
+│   ├── feature-table/
+│   │   └── SKILL.md
+│   └── gdoc-to-html/
 │       └── SKILL.md
 │
 └── 📁 docs/                  ← Detailed guides
@@ -110,7 +112,7 @@ uworld-webgenie-commands/
 
 ---
 
-## 4. The 8 Skills
+## 4. The 9 Skills
 
 | Skill | Command | Role | What It Does |
 |---|---|---|---|
@@ -122,6 +124,7 @@ uworld-webgenie-commands/
 | Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
 | Figma to Elementor | `/figma-to-elementor` | Developers | Converts Figma design to pixel-perfect Elementor JSON — **requires Figma MCP** |
 | Feature Table | `/feature-table` | Developers | Generates UWorld comparison table HTML |
+| GDoc to HTML | `/gdoc-to-html` | CMS / Content | Converts pasted Google Doc or Word content to clean UWorld-standard HTML |
 
 ---
 
@@ -169,9 +172,10 @@ Installing skills...
   ✓     /figma-to-code
   ✓     /figma-to-elementor
   ✓     /feature-table
+  ✓     /gdoc-to-html
 
 ══════════════════════════════════════════════════════
-  Installation complete! 8 skills installed.
+  Installation complete! 9 skills installed.
 ══════════════════════════════════════════════════════
 ```
 
@@ -351,6 +355,47 @@ Implement this design from Figma.
 
 ---
 
+### `/gdoc-to-html` — Google Doc / Word to HTML
+
+```
+/gdoc-to-html
+[paste your Google Doc or Word content here]
+```
+
+**Example:**
+```
+/gdoc-to-html
+What Is the CFA® Exam?
+
+The CFA® exam is one of the most respected credentials in finance...
+
+[H2] Why Candidates Fail
+
+Most candidates underestimate the time commitment...
+```
+
+**What it does:**
+
+Applies the UWorld Golden HTML Rule Set — strictly, in order:
+
+1. Wraps every paragraph in `<p class="custom-para">` — the final paragraph gets `no-margin-bottom`
+2. Converts `<ul>` / `<ol>` to UWorld list classes
+3. Processes `<h2>` / `<h3>` — strips `[H2]`/`[H3]` markers and `<strong>`, generates `id` from original text
+4. Adds `target="_blank"` only to non-uworld.com links
+5. Preserves every character, entity, and inline element exactly
+
+**Returns:** Clean, paste-ready HTML — no explanations, no wrappers, no markdown fences.
+
+**Requirements:**
+
+| Requirement | Details |
+|---|---|
+| Input | Paste raw Google Doc text, exported HTML, or any mixed content |
+| Headings | Tag with `[H2]` or `[H3]` in the text if not already `<h2>`/`<h3>` tags |
+| Links | Internal UWorld links are auto-detected; all others get `target="_blank"` |
+
+---
+
 ## 7. How to Create a New Skill
 
 > Full guide: [docs/create-a-skill.md](docs/create-a-skill.md)
@@ -522,7 +567,7 @@ ls ~/.claude/skills/
 Expected output:
 ```
 cms-format/     content-match/      feature-table/  figma-to-code/
-figma-to-elementor/  page-audit/   table-compare/  visual-diff/
+figma-to-elementor/  gdoc-to-html/  page-audit/   table-compare/  visual-diff/
 ```
 
 ---
@@ -533,7 +578,7 @@ figma-to-elementor/  page-audit/   table-compare/  visual-diff/
 |---|---|
 | QA Engineer | `/page-audit` `/table-compare` `/visual-diff` `/content-match` |
 | Frontend Developer | `/figma-to-code` `/figma-to-elementor` `/feature-table` `/page-audit` |
-| CMS / Content Editor | `/cms-format` `/content-match` `/table-compare` |
+| CMS / Content Editor | `/cms-format` `/content-match` `/table-compare` `/gdoc-to-html` |
 | Full-Stack Developer | `/page-audit` `/content-match` `/figma-to-code` |
 
 ---
