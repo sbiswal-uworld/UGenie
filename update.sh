@@ -6,6 +6,7 @@
 set -e
 
 SKILLS_DIR="$HOME/.claude/skills"
+COMMANDS_DIR="$HOME/.claude/commands"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$SCRIPT_DIR/skills"
 
@@ -21,6 +22,8 @@ if [[ ! -d "$SKILLS_DIR" ]]; then
   exit 0
 fi
 
+mkdir -p "$COMMANDS_DIR"
+
 SKILLS=(
   "page-audit"
   "cms-format"
@@ -28,7 +31,9 @@ SKILLS=(
   "visual-diff"
   "table-compare"
   "figma-to-code"
+  "figma-to-elementor"
   "feature-table"
+  "gdoc-to-html"
 )
 
 updated=0
@@ -38,6 +43,8 @@ for skill in "${SKILLS[@]}"; do
   src="$SOURCE_DIR/$skill/SKILL.md"
   dst_dir="$SKILLS_DIR/$skill"
   dst="$dst_dir/SKILL.md"
+  cmd="$COMMANDS_DIR/$skill.md"
+  skill_changed=false
 
   if [[ ! -f "$src" ]]; then
     echo "  SKIP  /$skill  (source not found)"
@@ -47,13 +54,24 @@ for skill in "${SKILLS[@]}"; do
 
   mkdir -p "$dst_dir"
 
-  if [[ -f "$dst" ]] && cmp -s "$src" "$dst"; then
-    echo "  --    /$skill  (no changes)"
-    ((skipped++)) || true
-  else
+  # Update ~/.claude/skills/<name>/SKILL.md
+  if [[ ! -f "$dst" ]] || ! cmp -s "$src" "$dst"; then
     cp "$src" "$dst"
+    skill_changed=true
+  fi
+
+  # Update ~/.claude/commands/<name>.md
+  if [[ ! -f "$cmd" ]] || ! cmp -s "$src" "$cmd"; then
+    cp "$src" "$cmd"
+    skill_changed=true
+  fi
+
+  if $skill_changed; then
     echo "  ✓     /$skill  (updated)"
     ((updated++)) || true
+  else
+    echo "  --    /$skill  (no changes)"
+    ((skipped++)) || true
   fi
 done
 
