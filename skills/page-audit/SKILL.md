@@ -1,8 +1,8 @@
 ---
 name: page-audit
-description: Deep single-page SEO analysis covering on-page elements, content quality, technical meta tags, schema, images, and performance. Use when user says "analyze this page", "check page SEO", "single URL", "check this page", "page analysis", or provides a single URL for review.
+description: Deep single-page SEO analysis covering on-page elements, content quality, technical meta tags, schema, images, and performance. Uses bash+curl+grep for reliable HTML parsing (avoids WebFetch metadata loss). Extracts complete image inventory with file sizes, alt text, dimensions, and lazy loading. Use when user says "analyze this page", "check page SEO", "single URL", "check this page", "page analysis", or provides a single URL for review.
 author: Sangram Biswal
-version: 2.0.0
+version: 2.1.0
 category: seo
 user-invokable: true
 argument-hint: "<url> [page-type: product|pillar|blog]"
@@ -32,53 +32,84 @@ This skill audits a single URL across 7 critical dimensions:
 
 ## Step 1 — Fetch & Parse Complete HTML
 
-Use WebFetch with explicit prompt requesting raw HTML analysis:
+Use **bash + curl + grep** for reliable HTML extraction (WebFetch converts to markdown, losing metadata).
 
+### 1.1 Extract Core Metadata via Bash
+```bash
+curl -s "URL" > /tmp/page.html
+
+# Extract title
+grep -oP '<title>\K[^<]+' /tmp/page.html
+
+# Extract meta tags (description, canonical, viewport, robots, og:*, twitter:*)
+grep -oP '<meta name="description" content="\K[^"]+' /tmp/page.html
+grep -oP '<link rel="canonical" href="\K[^"]+' /tmp/page.html
+grep -oP '<meta name="viewport" content="\K[^"]+' /tmp/page.html
+grep 'property="og:' /tmp/page.html | grep -E 'og:(title|description|image|url)'
+grep 'name="twitter:' /tmp/page.html
+
+# Extract HTML lang attribute
+grep -oP '<html[^>]*lang="\K[^"]+' /tmp/page.html
 ```
-## TITLE TAG
-[exact text between <title> tags]
 
-## META TAGS
-- description: [content attribute]
-- canonical: [href attribute]
-- viewport: [content attribute]
-- robots: [content attribute]
-- og:title, og:description, og:image, og:url: [content attributes]
-- twitter:card, twitter:title, twitter:description: [content attributes]
-- hreflang: [rel="alternate" hreflang tags]
-- lang: [html lang attribute]
+### 1.2 Extract Heading Hierarchy
+```bash
+echo "=== H1 TAGS ===" && grep -oP '<h1[^>]*>\K[^<]+' /tmp/page.html
+echo "=== H2 TAGS ===" && grep -oP '<h2[^>]*>\K[^<]+' /tmp/page.html | head -15
+echo "=== H3 TAGS ===" && grep -oP '<h3[^>]*>\K[^<]+' /tmp/page.html | head -10
+```
 
-## H1-H6 HEADING STRUCTURE
-[List all headings in document order with exact text]
+### 1.3 Extract Complete Image Inventory with File Sizes
+```bash
+# Count total images
+grep -c '<img' /tmp/page.html
 
-## ALL IMG TAGS - COMPLETE DETAILS
-For EACH img tag:
-- Filename/src: [src value]
-- Format: [jpg/png/webp/svg/gif/avif]
-- File size: [KB or 'not specified']
-- Width: [px or 'missing']
-- Height: [px or 'missing']
-- Alt text: [text or 'MISSING']
-- Loading: [loading attribute or 'not specified']
-- Class/data: [data-src, data-lazy, or lazy-loader class names]
+# Extract all image tags with detailed analysis
+grep -o '<img[^>]*>' /tmp/page.html | nl
 
-## SCRIPT TAGS IN HEAD
-[Count and list with src, async, defer attributes]
+# Check alt text presence
+grep -c 'alt="[^"]*"' /tmp/page.html  # with alt attr
+grep '<img[^>]*>' /tmp/page.html | grep -c -v 'alt='  # missing alt
 
-## LINK TAGS FOR STYLESHEETS
-[Count each <link rel="stylesheet">]
+# Check dimensions
+grep -c 'width=' /tmp/page.html
+grep -c 'height=' /tmp/page.html
 
-## JSON-LD BLOCKS
-[Each <script type="application/ld+json"> with @type]
+# Check lazy loading
+grep -c 'loading="lazy"' /tmp/page.html
+```
 
-## ANCHOR TAGS - COMPLETE INVENTORY
-[For ALL <a> tags: href, target, rel attributes. Classify internal/external]
+### 1.4 Extract JSON-LD Schema
+```bash
+# Count schema blocks
+grep -c 'application/ld+json' /tmp/page.html
 
-## HTML FILE SIZE
-[Total raw HTML size in KB]
+# Extract schema types
+grep -o '"@type":"[^"]*"' /tmp/page.html | sort | uniq
+```
 
-## PAGE CONTENT INDICATORS
-[Presence of: pricing, CTAs, testimonials, guarantees, features, author bio, publish date]
+### 1.5 Extract Links
+```bash
+echo "=== INTERNAL LINKS ===" && grep -o 'href="/[^"]*"' /tmp/page.html | wc -l
+echo "=== EXTERNAL LINKS ===" && grep -o 'href="https://[^"]*"' /tmp/page.html | grep -v 'yourdomain.com' | wc -l
+echo "=== target=_blank ===" && grep -c 'target="_blank"' /tmp/page.html
+echo "=== rel=noopener ===" && grep -c 'rel="noopener' /tmp/page.html
+```
+
+### 1.6 Performance Metrics
+```bash
+# File size
+du -k /tmp/page.html | awk '{print $1}'
+
+# Script/CSS counts
+grep -c '<link rel="stylesheet"' /tmp/page.html
+grep -c '<script[^>]*src=' /tmp/page.html
+```
+
+### 1.7 Extract Image File Sizes
+```bash
+# For each image URL, get actual file size via curl -I
+curl -sI "IMAGE_URL" 2>/dev/null | grep -i 'content-length' | awk '{print $2 / 1024 " KB"}'
 ```
 
 ---
@@ -111,11 +142,88 @@ Create a table with PASS / FAIL / WARN for each check:
 
 ## Step 3 — Image Analysis (MANDATORY & COMPREHENSIVE)
 
-For **every** `<img>` tag, build a detailed table:
+### 3.1 Extract Complete Image Inventory (ALL IMAGES)
+
+Use this bash script to extract **all** image details in one comprehensive table:
+
+```bash
+#!/bin/bash
+html_file="$1"
+
+echo "| # | Filename/Source | Format | Size (KB) | Alt Text | Width | Height | Loading | Issues |"
+echo "|---|---|---|---|---|---|---|---|---|"
+
+img_count=1
+grep -o '<img[^>]*>' "$html_file" | while read -r img_tag; do
+    # Extract src
+    src=$(echo "$img_tag" | grep -oP 'src="\K[^"]+')
+    if [[ $src == /* ]]; then src="https://yourdomain.com${src}"; fi
+    
+    # Extract filename
+    filename=$(basename "$src")
+    
+    # Detect format
+    case "$filename" in
+        *.webp) format="WebP" ;;
+        *.png) format="PNG" ;;
+        *.jpg|*.jpeg) format="JPG" ;;
+        *.gif) format="GIF" ;;
+        *.svg) format="SVG" ;;
+        *) format="Unknown" ;;
+    esac
+    
+    # Extract width/height
+    width=$(echo "$img_tag" | grep -oP 'width="\K[^"]+' | head -1)
+    width="${width:-missing}"
+    height=$(echo "$img_tag" | grep -oP 'height="\K[^"]+' | head -1)
+    height="${height:-missing}"
+    
+    # Extract alt text
+    alt=$(echo "$img_tag" | grep -oP 'alt="\K[^"]*')
+    if [ -z "$alt" ]; then
+        alt="**MISSING**"
+    fi
+    
+    # Extract loading
+    loading=$(echo "$img_tag" | grep -oP 'loading="\K[^"]+')
+    loading="${loading:-not specified}"
+    
+    # Get file size (via curl headers)
+    size="not specified"
+    if [[ $src == http* ]]; then
+        size_bytes=$(curl -sI "$src" 2>/dev/null | grep -i 'content-length' | awk '{print $2}' | tr -d '\r')
+        if [ ! -z "$size_bytes" ]; then
+            size_kb=$((size_bytes / 1024))
+            if [ $size_kb -gt 500 ]; then
+                size="$size_kb (P1: >500KB)"
+            elif [ $size_kb -gt 200 ]; then
+                size="$size_kb (P2: >200KB)"
+            else
+                size="$size_kb"
+            fi
+        fi
+    fi
+    
+    # Determine issues
+    issues=""
+    [[ $alt == *"MISSING"* ]] && issues="P1: No alt text"
+    [[ $loading == "not specified" && $img_count -gt 2 ]] && issues="${issues:+$issues, }P2: Not lazy-loaded"
+    [[ $width == "missing" || $height == "missing" ]] && issues="${issues:+$issues, }P2: Missing dimensions"
+    
+    # Truncate for display
+    display_filename=$(echo "$filename" | cut -c1-50)
+    display_alt=$(echo "$alt" | cut -c1-40)
+    
+    echo "| $img_count | $display_filename | $format | $size | $display_alt | $width | $height | $loading | $issues |"
+    ((img_count++))
+done
+```
+
+For **every** `<img>` tag, output row includes:
 
 | # | Filename/Source | Format | Size | Alt Text | Width | Height | Loading | Issues |
 |---|---|---|---|---|---|---|---|---|
-| 1 | [src or data URI] | [jpg/png/webp/svg/gif/avif] | [KB or 'not specified'] | [text or **MISSING**] | [px or 'missing'] | [px or 'missing'] | [lazy/not specified] | [P1/P2 flags] |
+| 1 | [src basename] | [jpg/png/webp/svg/gif/avif] | [KB or 'not specified'] | [text or **MISSING**] | [px or 'missing'] | [px or 'missing'] | [lazy/not specified] | [P1/P2 flags] |
 
 ### Image Quality Rules — CRITICAL
 
@@ -417,8 +525,10 @@ SUMMARY
 | URL unreachable (404, DNS failure, connection refused) | Report error clearly with status code. Do not guess content. Suggest user verify URL and try again. |
 | Page requires authentication (401/403) | Report page is behind authentication. Suggest providing rendered HTML directly or a publicly accessible URL. |
 | JavaScript-rendered content (empty body in HTML) | Note that key content may be CSR. Analyze available HTML and flag results as potentially incomplete. Suggest browser-rendered snapshot if available. |
-| WebFetch strips head metadata | Note limitation: WebFetch converts HTML to markdown, losing `<head>` details. Explicitly request raw HTML analysis via detailed prompt. If still incomplete, note in report. |
-| Images not detected | Use explicit image extraction prompt requesting complete img tag inventory with all attributes (src, alt, width, height, loading, class). Request multiple times if needed. |
+| curl connection timeout | Retry with longer timeout or check if domain is blocked. Some domains may require user-agent headers: `curl -s -A "Mozilla/5.0" URL` |
+| Image file size unavailable | Skip size check if HEAD request fails. Note in report as "not specified" and flag as potential optimization opportunity. |
+| Images not detected | Use bash grep to extract ALL img tags: `grep -o '<img[^>]*>' file.html \| nl` — guaranteed to find every image with attributes. |
+| Malformed HTML | Bash grep is resilient to broken HTML. It will extract partial matches. Analyze what's available and note limitations in report. |
 
 ---
 
@@ -470,5 +580,6 @@ SUMMARY
 
 ## Version History
 
+- **v2.1.0** (2026-05-14): Switched from WebFetch to bash+curl+grep HTML parsing for reliable metadata extraction. Added comprehensive bash scripts for image inventory with file size detection. Improved accuracy of alt text, dimensions, and lazy loading detection. Enhanced image analysis to extract ALL images with complete details. Better error handling for timeout/connection issues.
 - **v2.0.0** (2026-05-13): Complete image analysis methodology with mandatory alt text, comprehensive checklist coverage, detailed scoring weights, improved error handling, common findings reference
 - **v1.9.9** (prior): Initial version
