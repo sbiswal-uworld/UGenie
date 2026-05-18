@@ -1,8 +1,8 @@
 ---
 name: page-audit
-description: Deep single-page SEO analysis covering on-page elements, content quality, technical meta tags, schema, images, and performance. Uses bash+curl+grep for reliable HTML parsing (avoids WebFetch metadata loss). Extracts complete image inventory with file sizes, alt text, dimensions, and lazy loading. Use when user says "analyze this page", "check page SEO", "single URL", "check this page", "page analysis", or provides a single URL for review.
+description: Deep single-page SEO audit covering on-page SEO, content quality, technical meta tags, schema, images, performance, responsive design, and HTML/JS code quality. Uses bash+curl+grep for reliable HTML parsing. Use when user says "analyze this page", "check page SEO", "single URL", "check this page", or "page analysis".
 author: Sangram Biswal
-version: 2.1.0
+version: 2.2.0
 category: seo
 user-invokable: true
 argument-hint: "<url> [page-type: product|pillar|blog]"
@@ -19,7 +19,7 @@ Perform a comprehensive single-page SEO audit. You are a senior web QA engineer 
 
 ## Overview
 
-This skill audits a single URL across 7 critical dimensions:
+This skill audits a single URL across 9 critical dimensions:
 1. **On-Page SEO** — title, meta description, H1, heading hierarchy, URL structure, internal/external links
 2. **Content Quality** — word count, readability, E-E-A-T signals, freshness
 3. **Technical Elements** — viewport, canonical, OG tags (all 4), Twitter Card, hreflang, lang, robots meta
@@ -27,6 +27,8 @@ This skill audits a single URL across 7 critical dimensions:
 5. **Images** — alt text (mandatory), format (WebP/AVIF recommended), size, dimensions, lazy loading
 6. **Performance** — render-blocking resources, stylesheet count, HTML size, LCP signals, CLS prevention
 7. **QA Checklist** — page-type-specific requirements (CTAs, pricing, testimonials, guarantees, etc.)
+8. **Responsive Test** — viewport meta, srcset/sizes, media queries, mobile font sizes, touch targets, horizontal scroll risk
+9. **Console & Code Quality** — HTML structure errors, deprecated elements, duplicate IDs, missing required attributes, inline JS error patterns, malformed tags
 
 ---
 
@@ -426,19 +428,270 @@ Scan all visible text for these terms and verify correct symbol:
 
 ---
 
+## Step 10 — Responsive Test
+
+Analyze the HTML source for responsive design signals. Since curl fetches static HTML (no browser rendering), we check structural indicators that predict mobile behaviour.
+
+### 10.1 Viewport & Mobile Meta
+```bash
+# Viewport meta tag
+grep -oP '<meta name="viewport" content="\K[^"]+' /tmp/page.html
+
+# Theme color (mobile browser chrome)
+grep -oP '<meta name="theme-color" content="\K[^"]+' /tmp/page.html
+
+# Apple mobile meta tags
+grep -i 'apple-mobile-web-app' /tmp/page.html | head -5
+```
+
+### 10.2 Responsive Images
+```bash
+# Images WITH srcset (responsive images)
+grep -o '<img[^>]*>' /tmp/page.html | grep -c 'srcset='
+
+# Images WITHOUT srcset (fixed-size risk)
+grep -o '<img[^>]*>' /tmp/page.html | grep -cv 'srcset='
+
+# Images with sizes attribute
+grep -o '<img[^>]*>' /tmp/page.html | grep -c 'sizes='
+
+# Images using vw units in sizes (fluid responsive)
+grep -o 'sizes="[^"]*"' /tmp/page.html | grep -c 'vw'
+
+# Picture elements (art direction responsive)
+grep -c '<picture' /tmp/page.html
+```
+
+### 10.3 Media Queries & CSS
+```bash
+# Inline style media queries
+grep -o '@media[^{]*{' /tmp/page.html | head -10
+
+# CSS files linked (check each for media attribute)
+grep -o '<link[^>]*stylesheet[^>]*>' /tmp/page.html
+
+# Responsive utility classes (Tailwind / Bootstrap signals)
+grep -oP 'class="[^"]*"' /tmp/page.html | grep -oP '\b(sm:|md:|lg:|xl:|col-|flex-|grid-)' | sort | uniq -c | sort -rn | head -10
+```
+
+### 10.4 Font & Touch Target Checks
+```bash
+# Inline font-size declarations (flag anything < 14px)
+grep -oP 'font-size:\s*\K[0-9]+px' /tmp/page.html | sort -n | head -10
+
+# Viewport-relative font sizes (fluid typography — good)
+grep -oP 'font-size:\s*\K[0-9.]+vw' /tmp/page.html | head -5
+
+# Small tap targets — buttons/links with fixed small heights
+grep -oP '<(button|a)[^>]*style="[^"]*height:\s*\K[0-9]+px' /tmp/page.html | sort -n | head -10
+
+# Input types (mobile keyboard optimisation)
+grep -oP '<input[^>]*type="\K[^"]+' /tmp/page.html | sort | uniq -c | sort -rn
+```
+
+### 10.5 Horizontal Scroll Risk
+```bash
+# Fixed pixel widths wider than typical mobile (>480px)
+grep -oP 'width:\s*\K[5-9][0-9]{2,}px|[1-9][0-9]{3,}px' /tmp/page.html | head -10
+
+# Overflow hidden / scroll signals
+grep -c 'overflow.*hidden\|overflow-x.*hidden' /tmp/page.html
+
+# Tables without responsive wrapper
+grep -c '<table' /tmp/page.html
+grep -c 'overflow.*auto\|overflow.*scroll' /tmp/page.html
+```
+
+### Responsive Audit Output Table
+
+| Check | Rule | Status |
+|---|---|---|
+| Viewport meta tag | `width=device-width, initial-scale=1` present | PASS/FAIL |
+| Responsive images | `srcset` on all content images | PASS/WARN/FAIL |
+| `sizes` attribute | Present on srcset images | PASS/WARN |
+| `<picture>` elements | Art direction for hero/key images | PASS/WARN |
+| Font sizes | No inline sizes below 14px | PASS/WARN/FAIL |
+| Touch targets | Buttons/links ≥44px height (WCAG 2.5.5) | PASS/WARN/FAIL |
+| Fixed-width containers | No elements wider than viewport (>480px fixed px) | PASS/WARN/FAIL |
+| Tables | Wrapped in overflow container | PASS/WARN/FAIL |
+| Horizontal scroll risk | Overflow-x controlled | PASS/WARN/FAIL |
+| Mobile input types | `email`, `tel`, `number` used where appropriate | PASS/WARN |
+
+**Severity:**
+- Viewport meta missing = **P1** (mobile rendering completely broken)
+- Fixed-width containers >480px = **P1** (forces horizontal scroll on mobile)
+- Images without srcset = **P2** (serves desktop-sized images to mobile, wastes bandwidth)
+- Font sizes <14px inline = **P2** (unreadable on mobile, fails WCAG 1.4.4)
+- Touch targets <44px = **P2** (WCAG 2.5.5 failure, poor mobile UX)
+- Tables not wrapped = **P3** (possible horizontal scroll on narrow screens)
+
+---
+
+## Step 11 — Console & Code Quality
+
+Detect HTML structure errors, deprecated elements, JS error patterns, and code quality issues — all via static analysis of the raw HTML.
+
+### 11.1 HTML Structure Errors
+```bash
+# Duplicate IDs (must be unique per HTML spec)
+grep -oP 'id="\K[^"]+' /tmp/page.html | sort | uniq -d
+
+# Unclosed common block elements (heuristic check)
+open_divs=$(grep -c '<div' /tmp/page.html)
+close_divs=$(grep -c '</div>' /tmp/page.html)
+echo "Open <div>: $open_divs | Close </div>: $close_divs"
+
+open_sections=$(grep -c '<section' /tmp/page.html)
+close_sections=$(grep -c '</section>' /tmp/page.html)
+echo "Open <section>: $open_sections | Close </section>: $close_sections"
+
+# Nested anchor tags (invalid HTML — <a> inside <a>)
+grep -oP '<a[^>]*>.*?<a' /tmp/page.html | head -5
+
+# Form elements outside <form> tags
+grep -c '<input\|<textarea\|<select' /tmp/page.html
+grep -c '<form' /tmp/page.html
+```
+
+### 11.2 Deprecated / Invalid HTML Elements
+```bash
+# Deprecated presentational elements
+echo "=== DEPRECATED ELEMENTS ===" 
+grep -oi '<font\b' /tmp/page.html | wc -l | xargs -I{} echo "<font>: {}"
+grep -oi '<center\b' /tmp/page.html | wc -l | xargs -I{} echo "<center>: {}"
+grep -oi '<marquee\b' /tmp/page.html | wc -l | xargs -I{} echo "<marquee>: {}"
+grep -oi '<blink\b' /tmp/page.html | wc -l | xargs -I{} echo "<blink>: {}"
+grep -oi '<strike\b' /tmp/page.html | wc -l | xargs -I{} echo "<strike>: {}"
+grep -oi '<frameset\b' /tmp/page.html | wc -l | xargs -I{} echo "<frameset>: {}"
+
+# Deprecated attributes
+grep -c 'align="' /tmp/page.html
+grep -c 'bgcolor="' /tmp/page.html
+grep -c 'border="' /tmp/page.html
+grep -c 'cellpadding=\|cellspacing=' /tmp/page.html
+```
+
+### 11.3 Missing Required Attributes
+```bash
+# <img> missing alt attribute entirely
+grep -o '<img[^>]*>' /tmp/page.html | grep -cv 'alt='
+
+# <img> with empty alt="" (decorative — acceptable only for spacers)
+grep -o '<img[^>]*>' /tmp/page.html | grep -c 'alt=""'
+
+# <input> missing type attribute (defaults to text, may cause UX issues)
+grep -o '<input[^>]*>' /tmp/page.html | grep -cv 'type='
+
+# <a> tags missing href (non-functional links)
+grep -o '<a [^>]*>' /tmp/page.html | grep -cv 'href='
+
+# <label> elements missing for= attribute
+grep -o '<label[^>]*>' /tmp/page.html | grep -cv 'for='
+
+# <button> missing type attribute (defaults to submit — can cause unexpected form submissions)
+grep -o '<button[^>]*>' /tmp/page.html | grep -cv 'type='
+```
+
+### 11.4 JavaScript Error Patterns
+```bash
+# Inline event handlers (brittle JS — error-prone pattern)
+echo "=== INLINE EVENT HANDLERS ===" 
+grep -oc 'onclick=' /tmp/page.html | xargs -I{} echo "onclick: {}"
+grep -oc 'onload=' /tmp/page.html | xargs -I{} echo "onload: {}"
+grep -oc 'onerror=' /tmp/page.html | xargs -I{} echo "onerror: {}"
+grep -oc 'onsubmit=' /tmp/page.html | xargs -I{} echo "onsubmit: {}"
+
+# console.log left in production (debug code not stripped)
+grep -c 'console\.log' /tmp/page.html
+
+# JavaScript void(0) pattern (outdated href technique)
+grep -c 'href="javascript:void' /tmp/page.html
+
+# document.write usage (blocks rendering, deprecated pattern)
+grep -c 'document\.write(' /tmp/page.html
+
+# eval() usage (security risk + performance)
+grep -c 'eval(' /tmp/page.html
+
+# Synchronous XHR (blocks main thread)
+grep -c 'XMLHttpRequest\|\.open.*false' /tmp/page.html
+
+# Mixed content signals (http:// resources on https:// page)
+base_protocol=$(grep -oP 'canonical" href="\K(https?)' /tmp/page.html | head -1)
+if [ "$base_protocol" = "https" ]; then
+  grep -c 'src="http://' /tmp/page.html
+  grep -c 'href="http://' /tmp/page.html
+fi
+```
+
+### 11.5 Inline Script Quality
+```bash
+# Count total inline <script> blocks (not src= ones)
+grep -c '<script>' /tmp/page.html
+grep -c '<script type="text/javascript">' /tmp/page.html
+
+# Scripts in <head> without async/defer (render-blocking)
+# Extract head section and check scripts
+sed -n '/<head/,/<\/head>/p' /tmp/page.html | grep '<script' | grep -cv 'async\|defer\|type="application/ld+json"'
+
+# Check for common error-prone patterns
+grep -c 'undefined\.' /tmp/page.html
+grep -c '\.innerHTML\s*=' /tmp/page.html  # XSS risk
+```
+
+### Console & Code Quality Output Table
+
+| Check | Found | Severity | Notes |
+|---|---|---|---|
+| Duplicate IDs | [list] | P1 | Must be unique per HTML spec |
+| Unclosed `<div>` tags | [open vs close count] | P1/P2 | Structural break |
+| Nested `<a>` tags | [count] | P1 | Invalid HTML |
+| Deprecated `<font>` | [count] | P2 | Use CSS instead |
+| Deprecated `<center>` | [count] | P2 | Use CSS flexbox/text-align |
+| Deprecated `align=` attr | [count] | P2 | Use CSS |
+| `<img>` missing `alt=` attr | [count] | P1 | Accessibility failure |
+| `<input>` missing `type=` | [count] | P2 | UX + mobile keyboard risk |
+| `<a>` missing `href=` | [count] | P2 | Non-functional link |
+| `<button>` missing `type=` | [count] | P2 | Accidental form submit |
+| `<label>` missing `for=` | [count] | P2 | Accessibility failure |
+| `console.log` in production | [count] | P2 | Debug code — strip before deploy |
+| `document.write()` | [count] | P1 | Blocks rendering |
+| `eval()` usage | [count] | P1 | Security + performance risk |
+| Inline `onclick=` handlers | [count] | P2 | Brittle, use addEventListener |
+| `javascript:void(0)` hrefs | [count] | P3 | Outdated pattern |
+| Mixed content (http on https) | [count] | P1 | Browser blocks, breaks assets |
+| Render-blocking head scripts | [count] | P2 | Add async/defer |
+| `.innerHTML =` assignments | [count] | P2 | Potential XSS vector |
+
+**Severity Rules:**
+- Duplicate IDs = **P1** (CSS/JS targeting breaks; invalid per HTML spec)
+- `document.write()` = **P1** (blocks rendering, deprecated)
+- `eval()` = **P1** (CSP violation risk, XSS attack surface)
+- Mixed content (http on https) = **P1** (browser blocks resources, breaks page)
+- Unclosed tags (count mismatch >5) = **P2** (layout breaks in some browsers)
+- `console.log` left in = **P2** (performance + exposes logic to users)
+- Deprecated elements = **P2** (invalid markup, unpredictable rendering)
+- Missing `type=` on `<button>` = **P2** (submits parent form unexpectedly)
+- Inline event handlers = **P2** (CSP violations, hard to debug)
+- `javascript:void(0)` = **P3** (works but outdated)
+
+---
+
 ## Scoring Weights & Formula
 
 | Category | Weight | Max Score |
 |---|---|---|
-| On-Page SEO | 22% | 20 |
-| Content Quality | 23% | 20 |
-| Technical Meta Tags | 15% | 20 |
+| On-Page SEO | 18% | 20 |
+| Content Quality | 18% | 20 |
+| Technical Meta Tags | 12% | 20 |
 | Schema | 10% | 15 |
 | Images | 10% | 15 |
 | Trademark Compliance | 5% | 10 |
-| QA Checklist | 15% | 10 |
+| QA Checklist | 12% | 10 |
+| Responsive Test | 10% | 10 |
+| Console & Code Quality | 5% | 10 |
 
-**Overall Score = (On-Page × 0.22) + (Content × 0.23) + (Technical × 0.15) + (Schema × 0.10) + (Images × 0.10) + (Trademark × 0.05) + (QA × 0.15)**
+**Overall Score = (On-Page × 0.18) + (Content × 0.18) + (Technical × 0.12) + (Schema × 0.10) + (Images × 0.10) + (Trademark × 0.05) + (QA × 0.12) + (Responsive × 0.10) + (Console × 0.05)**
 
 Range: 0–100
 
@@ -455,13 +708,15 @@ Page Type: [detected type]
 OVERALL SCORE: [X]/100
 
 SECTION SCORES:
-  On-Page SEO:     [X]/20   [progress bar]
-  Content Quality: [X]/20   [progress bar]
-  Technical:       [X]/20   [progress bar]
-  Schema:          [X]/15   [progress bar]
-  Images:          [X]/15   [progress bar]
-  Trademark:       [X]/10   [progress bar]
-  QA Checklist:    [X]/10   [progress bar]
+  On-Page SEO:        [X]/20   [progress bar]
+  Content Quality:    [X]/20   [progress bar]
+  Technical:          [X]/20   [progress bar]
+  Schema:             [X]/15   [progress bar]
+  Images:             [X]/15   [progress bar]
+  Trademark:          [X]/10   [progress bar]
+  QA Checklist:       [X]/10   [progress bar]
+  Responsive:         [X]/10   [progress bar]
+  Console & Code:     [X]/10   [progress bar]
 
 ---
 
@@ -494,6 +749,14 @@ OR
 
 QA CHECKLIST
 [checklist with PASS/FAIL/WARN per item type]
+
+RESPONSIVE TEST
+[table: viewport meta, srcset coverage, font sizes, touch targets, fixed-width risk, table wrapping]
+[summary: mobile-ready | partial | broken — list top issues]
+
+CONSOLE & CODE QUALITY
+[table: duplicate IDs, unclosed tags, deprecated elements, missing required attrs, JS error patterns]
+[summary: X errors, Y warnings — list every P1 finding with line context]
 
 ---
 
@@ -580,6 +843,7 @@ SUMMARY
 
 ## Version History
 
+- **v2.2.0** (2026-05-18): Added Step 10 Responsive Test (viewport meta, srcset/sizes coverage, media queries, font sizes, touch targets, horizontal scroll risk). Added Step 11 Console & Code Quality (duplicate IDs, unclosed tags, deprecated elements, missing required attributes, JS error patterns — console.log, document.write, eval, mixed content, inline handlers). Updated scoring to 9 dimensions; weights rebalanced to 100%.
 - **v2.1.0** (2026-05-14): Switched from WebFetch to bash+curl+grep HTML parsing for reliable metadata extraction. Added comprehensive bash scripts for image inventory with file size detection. Improved accuracy of alt text, dimensions, and lazy loading detection. Enhanced image analysis to extract ALL images with complete details. Better error handling for timeout/connection issues.
 - **v2.0.0** (2026-05-13): Complete image analysis methodology with mandatory alt text, comprehensive checklist coverage, detailed scoring weights, improved error handling, common findings reference
 - **v1.9.9** (prior): Initial version
