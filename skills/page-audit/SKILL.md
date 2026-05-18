@@ -1,8 +1,8 @@
 ---
 name: page-audit
-description: Deep single-page SEO audit covering on-page SEO, content quality, technical meta tags, schema, images, performance, responsive design, and HTML/JS code quality. Uses bash+curl+grep for reliable HTML parsing. Use when user says "analyze this page", "check page SEO", "single URL", "check this page", or "page analysis".
+description: Deep single-page SEO audit covering on-page SEO, content quality, technical meta tags, schema, images, performance, responsive design, and HTML/JS code quality. Uses bash+curl+grep for reliable HTML parsing. STRICT ENFORCEMENT MODE - Image analysis table with all 9 columns mandatory on every audit. Trademark check simplified to QA checklist (first mention must have ® or ™). Use when user says "analyze this page", "check page SEO", "single URL", "check this page", or "page analysis".
 author: Sangram Biswal
-version: 2.2.0
+version: 2.5.0
 category: seo
 user-invokable: true
 argument-hint: "<url> [page-type: product|pillar|blog]"
@@ -14,6 +14,51 @@ license: MIT
 Perform a comprehensive single-page SEO audit. You are a senior web QA engineer for UWorld.
 
 **Usage:** `/page-audit <url> [page-type: product|pillar|blog]`
+
+---
+
+## ⚠️ CRITICAL: ALL RULES ARE MANDATORY AND NON-NEGOTIABLE
+
+This skill has 8 STRICT ENFORCEMENT RULES that MUST be followed on EVERY single audit without exception. These rules cannot be skipped, modified, or ignored:
+
+1. **IMAGE ANALYSIS TABLE** - Must show EVERY image with ALL 9 columns (no exceptions)
+2. **FILE SIZES** - Must fetch actual sizes via curl for each image
+3. **ALT TEXT** - Must verify and report for every image
+4. **DIMENSIONS** - Must extract width/height for every image
+5. **LAZY LOADING** - Must check loading attribute for every image
+6. **ISSUES COLUMN** - Must populate with P1/P2/P3 severity for each image
+7. **OUTPUT FORMAT** - Must follow exact section order and formatting
+8. **TRADEMARK TABLE** - Must show all violation counts and % compliance
+
+If these rules are not followed, the report is INCOMPLETE and INVALID. There are NO exceptions.
+
+---
+
+## VALID vs INVALID REPORTS
+
+**REPORT IS VALID IF AND ONLY IF:**
+- ✅ IMAGE ANALYSIS section includes complete table with EVERY image on page
+- ✅ Image table has all 9 columns populated with actual values (no empty cells)
+- ✅ File sizes fetched via curl for each image
+- ✅ Alt text column shows actual text or "MISSING"
+- ✅ Width/Height columns show actual values or "missing"
+- ✅ Loading column shows "lazy" or "not specified"
+- ✅ Issues column populated with P1/P2/P3 severity
+- ✅ All 8 sections appear in exact order (SEO, Images, Links, Performance, Schema, Content, QA, Responsive, Console, Fixes, Summary)
+- ✅ Progress bars use ███░░░ format
+- ✅ QA Checklist includes trademark symbol check (first mention of product name)
+- ✅ Summary section with top 3 critical issues and top 3 strengths
+
+**REPORT IS INVALID IF:**
+- ❌ Image table is missing (only summary provided)
+- ❌ Image table incomplete (doesn't show all images on page)
+- ❌ Any column in image table has empty cells or placeholders
+- ❌ File sizes not fetched (all marked "not specified" without attempting curl)
+- ❌ Alt text, Width, Height, Loading, or Issues columns empty/missing
+- ❌ Sections appear out of order
+- ❌ Progress bars incorrect format
+- ❌ Trademark table incomplete or missing counts
+- ❌ No Summary section
 
 ---
 
@@ -142,11 +187,21 @@ Create a table with PASS / FAIL / WARN for each check:
 
 ---
 
-## Step 3 — Image Analysis (MANDATORY & COMPREHENSIVE)
+## Step 3 — Image Analysis (MANDATORY & COMPREHENSIVE) - STRICT RULES
 
-### 3.1 Extract Complete Image Inventory (ALL IMAGES)
+### CRITICAL REQUIREMENT: IMAGE ANALYSIS TABLE IS NON-NEGOTIABLE
 
-Use this bash script to extract **all** image details in one comprehensive table:
+**This section is MANDATORY on EVERY audit. You MUST generate the detailed inventory table showing EVERY single image on the page with ALL required columns. No exceptions. No summaries instead of tables.**
+
+The IMAGE ANALYSIS section MUST include:
+1. Total image count in heading: "## IMAGE ANALYSIS (XX total images)"
+2. COMPLETE TABLE showing EVERY image with ALL columns below
+3. Summary statistics after the table
+4. Critical issues list
+
+### 3.1 Extract Complete Image Inventory (ALL IMAGES) - REQUIRED TABLE FORMAT
+
+MANDATORY: Extract **all** image details in one comprehensive table with these exact columns:
 
 ```bash
 #!/bin/bash
@@ -353,23 +408,20 @@ Parse every `<script type="application/ld+json">` block.
 
 ---
 
-## Step 7 — Trademark Compliance
+## Step 7 — Trademark Compliance (For Reference Only - Not Scored in QA Checklist)
 
-Scan all visible text for these terms and verify correct symbol:
+For informational audit purposes only. Trademark symbol requirement is now checked in QA Checklist as a simple presence check:
+- **Check:** Is at least ONE instance of the primary product name present with its ® or ™ symbol?
+- **PASS:** At least one instance found with correct symbol
+- **FAIL:** No instances found with correct symbol
 
-| Term | Required Form | Count | Status |
-|---|---|---|---|
-| CFA | CFA® | — | PASS/FAIL |
-| FRM | FRM® | — | PASS/FAIL |
-| CFP | CFP® | — | PASS/FAIL |
-| StudyPass | StudyPass™ | — | PASS/FAIL |
-| TotalPrep | TotalPrep™ | — | PASS/FAIL |
-| FlexiPay | FlexiPay™ | — | PASS/FAIL |
-| FreshStart | FreshStart™ | — | PASS/FAIL |
-| ExpertConnect | ExpertConnect™ | — | PASS/FAIL |
-| BootCamp | BootCamp™ | — | PASS/FAIL |
+Primary product names to check (by division):
+- **Finance:** CFA®, FRM®, CFP®
+- **Legal:** MCAT®, Bar Exam, NCBE®
+- **Medical:** USMLE®, NCLEX®, AAMC®
+- **General:** UWorld™, StudyPass™, TotalPrep™, FlexiPay™, FreshStart™, ExpertConnect™, BootCamp™
 
-**Rule:** Flag EVERY instance without its symbol as **P1 CRITICAL** (legal compliance + brand protection).
+**Rule:** Check ONLY if the first mention of the product name includes the symbol. If yes = PASS. If no = FAIL. This ensures at minimum, brand protection on the page.
 
 ---
 
@@ -396,6 +448,7 @@ Scan all visible text for these terms and verify correct symbol:
 | Footer copyright year correct | PASS/FAIL |
 | Privacy Policy link present and functional | PASS/FAIL |
 | Terms of Use link present and functional | PASS/FAIL |
+| Primary product name includes ® or ™ symbol (first mention) | PASS/FAIL |
 
 ### Product Pages (Additional)
 
@@ -681,17 +734,18 @@ grep -c '\.innerHTML\s*=' /tmp/page.html  # XSS risk
 
 | Category | Weight | Max Score |
 |---|---|---|
-| On-Page SEO | 18% | 20 |
-| Content Quality | 18% | 20 |
+| On-Page SEO | 20% | 20 |
+| Content Quality | 20% | 20 |
 | Technical Meta Tags | 12% | 20 |
 | Schema | 10% | 15 |
 | Images | 10% | 15 |
-| Trademark Compliance | 5% | 10 |
-| QA Checklist | 12% | 10 |
+| QA Checklist | 14% | 10 |
 | Responsive Test | 10% | 10 |
-| Console & Code Quality | 5% | 10 |
+| Console & Code Quality | 4% | 10 |
 
-**Overall Score = (On-Page × 0.18) + (Content × 0.18) + (Technical × 0.12) + (Schema × 0.10) + (Images × 0.10) + (Trademark × 0.05) + (QA × 0.12) + (Responsive × 0.10) + (Console × 0.05)**
+**Overall Score = (On-Page × 0.20) + (Content × 0.20) + (Technical × 0.12) + (Schema × 0.10) + (Images × 0.10) + (QA × 0.14) + (Responsive × 0.10) + (Console × 0.04)**
+
+**Note:** Trademark compliance is now checked in QA Checklist (simple presence check for ® or ™ symbol on first mention). No longer scored as separate category.
 
 Range: 0–100
 
@@ -699,85 +753,261 @@ Range: 0–100
 
 ## Output Format
 
+**ALL REPORTS MUST FOLLOW THIS EXACT STRUCTURE:**
+
 ```
 === UWORLD PAGE AUDIT REPORT ===
 URL: [url]
 Date: [date]
-Page Type: [detected type]
+Page Type: [Hub / Pillar Page / Product / Blog] ([description])
 
-OVERALL SCORE: [X]/100
+OVERALL SCORE: XX/100
 
 SECTION SCORES:
-  On-Page SEO:        [X]/20   [progress bar]
-  Content Quality:    [X]/20   [progress bar]
-  Technical:          [X]/20   [progress bar]
-  Schema:             [X]/15   [progress bar]
-  Images:             [X]/15   [progress bar]
-  Trademark:          [X]/10   [progress bar]
-  QA Checklist:       [X]/10   [progress bar]
-  Responsive:         [X]/10   [progress bar]
-  Console & Code:     [X]/10   [progress bar]
+  On-Page SEO:        XX/20   [progress bar with ███░░░]
+  Content Quality:    XX/20   [progress bar]
+  Technical:          XX/20   [progress bar]
+  Schema:             XX/15   [progress bar]
+  Images:             XX/15   [progress bar]
+  QA Checklist:       XX/10   [progress bar]
+  Responsive Test:    XX/10   [progress bar]
+  Console & Code:     XX/10   [progress bar]
 
 ---
 
-SEO ANALYSIS
-[table with PASS/FAIL/WARN per check]
-[note H1 count specifically if >1]
+## SEO ANALYSIS
 
-IMAGE ANALYSIS ([count] total images)
-[complete table: filename, format, size, alt text, width, height, loading, issues]
-[summary: X images with alt, Y missing alt, Z format issues]
-
-LINK ANALYSIS
-[all links if <20, otherwise issues only]
-[note any missing target="_blank" or rel attributes]
-
-PERFORMANCE
-[table of checks with PASS/FAIL/WARN]
-
-SCHEMA
-[list types found: e.g., "Product schema present", "FAQ schema missing"]
-[list required schemas NOT found]
-
-CONTENT QUALITY
-[word count, readability score, E-E-A-T signals present, freshness]
-
-TRADEMARK COMPLIANCE
-[list EVERY violation with term, found form, required form]
-OR
-["No trademark violations found."]
-
-QA CHECKLIST
-[checklist with PASS/FAIL/WARN per item type]
-
-RESPONSIVE TEST
-[table: viewport meta, srcset coverage, font sizes, touch targets, fixed-width risk, table wrapping]
-[summary: mobile-ready | partial | broken — list top issues]
-
-CONSOLE & CODE QUALITY
-[table: duplicate IDs, unclosed tags, deprecated elements, missing required attrs, JS error patterns]
-[summary: X errors, Y warnings — list every P1 finding with line context]
+| Check | Rule | Value | Status |
+|---|---|---|---|
+| Title tag | 50–70 chars, keyword-rich | "[title]" (XX chars) | PASS/FAIL/WARN |
+| Meta description | 150–165 chars, compelling | "[description]" (XX chars) | PASS/FAIL |
+| H1 count | Exactly 1 | X H1 found | PASS/FAIL |
+| H1 content | Keyword-rich, matches intent | "[h1 text]" | PASS/FAIL |
+| H2–H6 hierarchy | Logical, no skipped levels | XX H2s, XX H3s | PASS/FAIL |
+| Canonical | Present, self-ref or correct | [URL] | PASS/FAIL |
+| Lang attribute | <html lang="en"> | lang="[lang]" | PASS/FAIL |
+| Viewport | Standard mobile meta | Present | PASS/FAIL |
+| OG: title | User-facing, not staging | "[og:title]" | PASS/FAIL |
+| OG: description | Present, compelling | [status] | PASS/FAIL |
+| OG: image | Absolute URL | [status] | PASS/FAIL |
+| OG: url | Matches canonical | [status] | PASS/FAIL |
+| Twitter card | twitter:card present | [value] | PASS/FAIL |
+| Meta robots | index, follow or block | [value] | PASS/FAIL |
+| URL structure | Short, descriptive | [URL] | PASS/FAIL |
 
 ---
 
-PRIORITIZED FIX LIST
+## IMAGE ANALYSIS (XX total images)
 
-P1 — CRITICAL (Fix Immediately):
-1. [issue] → [specific fix with code example if needed] | Impact: [% improvement]
-2. [issue] → [fix] | Impact: [metric]
+**MANDATORY TABLE: Complete Inventory of ALL Images**
 
-P2 — IMPORTANT (Fix Within 1 Week):
-1. [issue] → [fix] | Impact: [metric]
+| # | Filename/Source | Format | Size (KB) | Alt Text | Width | Height | Loading | Issues |
+|---|---|---|---|---|---|---|---|---|
+| 1 | [src basename] | [jpg/png/webp/svg/gif/avif] | [KB or 'not specified'] | [text or MISSING] | [px or 'missing'] | [px or 'missing'] | [lazy/not specified] | [P1/P2 flags] |
+| 2 | [next image] | ... | ... | ... | ... | ... | ... | ... |
+| ... | (continue for ALL images on page) | ... | ... | ... | ... | ... | ... | ... |
 
-P3 — MINOR (Fix Within 1 Month):
-1. [issue] → [fix] | Impact: [metric]
+**CRITICAL ENFORCEMENT RULES FOR IMAGE TABLE:**
+- MUST show EVERY single <img> tag found on page (no exceptions, no filtering)
+- MUST include all 9 columns: #, Filename, Format, Size, Alt, Width, Height, Loading, Issues
+- MUST get file size via curl -sI for each image URL (not just "not specified")
+- MUST populate Alt Text column with actual alt attribute value or "MISSING" if absent
+- MUST populate Width/Height with actual attribute values or "missing" if absent
+- MUST populate Loading with "lazy" if loading="lazy" present, else "not specified"
+- MUST flag all issues in Issues column using P1/P2/P3 severity
+- MUST include row for EVERY image, in order of appearance
+
+**After Table - Summary Statistics:**
+- **Total images:** XX
+- **Images with alt text:** XX/XX (XX%)
+- **Images MISSING alt text:** XX (P1 failures)
+- **WebP/AVIF format:** XX (XX%)
+- **PNG/JPG format:** XX (P2 flags)
+- **Dimensions present:** XX
+- **Dimensions missing:** XX (P2 flags)
+- **Lazy loading detected:** XX
+- **Format status:** [optimized | needs WebP conversion | CRITICAL OVERSIZED]
+
+**Critical Issues Section (required):**
+- List ALL P1 issues first (oversized images >500KB, missing alt text, etc.)
+- List ALL P2 issues second (missing dimensions, no lazy loading, etc.)
+- Include specific details: filename, size, impact, fix required
 
 ---
 
-SUMMARY
-[2–3 sentences on overall page health, top 3 issues, expected ROI from fixes]
-[Expected impact: X% organic visibility improvement, Y% social CTR improvement, Z% conversion improvement]
+## LINK ANALYSIS (XXX total)
+
+| Type | Count | Target="_blank" | rel="noopener noreferrer" | Issues |
+|---|---|---|---|---|
+| Internal | XX | [count] | N/A | [issues] |
+| External | XX | [count] | [count] | **P2: [count] missing security attributes** |
+| [Other type] | XX | [count] | [count] | [issues] |
+
+> **Pattern:** [Summary of link security findings]
+
+---
+
+## PERFORMANCE
+
+| Check | Rule | Status |
+|---|---|---|
+| Render-blocking scripts | No `<script src>` in `<head>` without `async`/`defer` | PASS/FAIL |
+| Stylesheet count | ≤5 external | PASS/FAIL |
+| HTML file size | <200KB | PASS/FAIL — [actual size] |
+| LCP image preload | `<link rel="preload" as="image">` | PASS/FAIL |
+| Image dimensions | Width + height on all | PASS/FAIL |
+| Lazy loading | Below-fold images lazy | PASS/FAIL |
+
+---
+
+## SCHEMA / STRUCTURED DATA
+
+**Schemas Found:**
+1. **[Schema Type 1]** — [status] ✓
+2. **[Schema Type 2]** — [status] ✓
+
+**Missing:**
+- **[Schema Type 3]** — [reason]
+- **[Schema Type 4]** — [reason]
+
+**Assessment:** XX/15 — [summary]
+
+---
+
+## CONTENT QUALITY
+
+| Metric | Value | Status |
+|---|---|---|
+| Word count | [count] | PASS/FAIL |
+| Readability | [grade level] | PASS/FAIL |
+| Keyword usage | [density] | PASS/FAIL |
+| E-E-A-T signals | [indicators] | PASS/FAIL |
+| Freshness | [publish/update dates] | PASS/FAIL |
+| Structure | [assessment] | PASS/FAIL |
+
+---
+
+## QA CHECKLIST
+
+**All Pages:**
+| Item | Status |
+|---|---|
+| CTA button present | PASS/FAIL |
+| Footer copyright year | PASS/FAIL |
+| Privacy Policy link | PASS/FAIL |
+| Terms of Use link | PASS/FAIL |
+| Primary product name includes ® or ™ symbol (first mention) | PASS/FAIL |
+
+**Hub/Pillar Pages:**
+| Item | Status |
+|---|---|
+| Author byline + credentials | PASS/FAIL |
+| Publish date | PASS/FAIL |
+| Table of contents | PASS/FAIL |
+| Related articles/links | PASS/FAIL |
+
+---
+
+## RESPONSIVE TEST
+
+| Check | Rule | Status |
+|---|---|---|
+| Viewport meta tag | `width=device-width, initial-scale=1` | PASS/FAIL |
+| Responsive images | `srcset` on content images | PASS/FAIL |
+| Font sizes | No inline <14px | PASS/FAIL |
+| Touch targets | ≥44px height (WCAG 2.5.5) | PASS/FAIL |
+| Fixed-width containers | No >480px fixed width | PASS/FAIL |
+| Tables | Wrapped in overflow | PASS/FAIL |
+
+---
+
+## CONSOLE & CODE QUALITY
+
+| Issue | Count | Severity | Notes |
+|---|---|---|---|
+| Duplicate IDs | XX | P1/P2 | [list IDs] |
+| Unclosed tags | [count diff] | P1/P2 | [details] |
+| Deprecated elements | XX | P2 | [list] |
+| Missing required attrs | XX | P1/P2 | [details] |
+| Render-blocking scripts | XX | P1 | [details] |
+| External links missing rel | XX | P2 | [details] |
+
+---
+
+## PRIORITIZED FIX LIST
+
+### P1 — CRITICAL (Fix Immediately)
+
+**1. [ISSUE TITLE]**
+- Current: [what exists]
+- **Fix:** [specific action with example code if applicable]
+- **Impact:** XX–XX% improvement
+- **Effort:** X hours
+
+**2. [ISSUE TITLE]**
+- Description with details
+- **Fix:** [specific steps]
+- **Impact:** [metric]
+- **Effort:** [time]
+
+### P2 — IMPORTANT (Fix Within 1 Week)
+
+**1. [ISSUE TITLE]**
+- Description
+- **Impact:** [metric]
+- **Effort:** [time]
+
+### P3 — MINOR (Fix Within 1 Month)
+
+**1. [ISSUE TITLE]**
+- Description
+- **Impact:** [metric]
+
+---
+
+## SUMMARY
+
+The [page type] scores **XX/100** — [2-3 sentence assessment of strengths and weaknesses].
+
+**Key differentiator:** [Notable finding vs. similar pages]
+
+**Top 3 Critical Issues:**
+1. [Issue 1 with impact]
+2. [Issue 2 with impact]
+3. [Issue 3 with impact]
+
+**Top 3 Strengths:**
+1. [Strength 1]
+2. [Strength 2]
+3. [Strength 3]
+
+**Combined P1 fixes are projected to yield:** +XX% organic visibility improvement, +XX% social CTR gain, +XX% conversion improvement
+
+**Timeline:** P1 (1-3 days) + P2 (4-7 days) = 2 weeks for core fixes
 ```
+
+**KEY FORMATTING RULES (MANDATORY - NO EXCEPTIONS):**
+
+1. ✅ Start with `=== UWORLD PAGE AUDIT REPORT ===` header
+2. ✅ Include Overall Score with visual progress bars using `███░░░` format
+3. ✅ All 9 sections in this exact order: SEO → Images → Links → Performance → Schema → Trademark → Content → QA → Responsive → Console → Fixes → Summary
+4. ✅ IMAGE ANALYSIS section MUST include complete table showing EVERY image with all 9 columns
+5. ✅ Image table columns are: # | Filename/Source | Format | Size (KB) | Alt Text | Width | Height | Loading | Issues
+6. ✅ Each image row MUST be populated with actual values (no placeholders or empty cells)
+7. ✅ File sizes MUST be fetched via curl -sI (not estimated or guessed)
+8. ✅ Alt text MUST show actual content or "MISSING" if absent (not "N/A" or blank)
+9. ✅ Width/Height MUST show actual values or "missing" if absent (not "N/A")
+10. ✅ Loading MUST show "lazy" or "not specified" (not "N/A" or blank)
+11. ✅ Issues MUST be populated with P1/P2/P3 severity or "None"
+12. ✅ Use markdown tables for structured data
+13. ✅ Include specific values (char counts, percentages, file sizes)
+14. ✅ Use PASS/FAIL/WARN status labels
+15. ✅ P1/P2/P3 severity classification with effort estimates
+16. ✅ Code examples in fixes (wrapped in backticks)
+17. ✅ Impact metrics for each fix
+18. ✅ Always include "SUMMARY" at end with key takeaways
+
+**IF ANY OF RULES 4-11 ARE NOT FOLLOWED, THE REPORT IS INVALID AND INCOMPLETE.**
 
 ---
 
@@ -789,9 +1019,11 @@ SUMMARY
 | Page requires authentication (401/403) | Report page is behind authentication. Suggest providing rendered HTML directly or a publicly accessible URL. |
 | JavaScript-rendered content (empty body in HTML) | Note that key content may be CSR. Analyze available HTML and flag results as potentially incomplete. Suggest browser-rendered snapshot if available. |
 | curl connection timeout | Retry with longer timeout or check if domain is blocked. Some domains may require user-agent headers: `curl -s -A "Mozilla/5.0" URL` |
-| Image file size unavailable | Skip size check if HEAD request fails. Note in report as "not specified" and flag as potential optimization opportunity. |
-| Images not detected | Use bash grep to extract ALL img tags: `grep -o '<img[^>]*>' file.html \| nl` — guaranteed to find every image with attributes. |
-| Malformed HTML | Bash grep is resilient to broken HTML. It will extract partial matches. Analyze what's available and note limitations in report. |
+| **IMAGE TABLE INCOMPLETE** | **CRITICAL: If image table is missing any images, the report is INVALID. Use bash grep to extract EVERY <img> tag. Example: `grep -o '<img[^>]*>' file.html` — guaranteed to find every image. Re-run extraction and ensure table shows all images.** |
+| Image file size unavailable | Get size via curl -sI. If HEAD request fails, note "not specified" in Size column. Do NOT skip the column - it must be populated. |
+| Images not detected | Use bash grep to extract ALL img tags: `grep -o '<img[^>]*>' file.html \| nl` — guaranteed to find every image with attributes. If grep returns 0 images, verify page loaded correctly. |
+| Malformed HTML | Bash grep is resilient to broken HTML. It will extract partial matches. Continue analysis with available data and note limitations in report. Do NOT omit the image table if HTML is malformed. |
+| Large pages with 100+ images | Image table MUST still show every image, even if page has 100+ images. No exceptions, no "see attached file" - table must be in report. If too large, this is a finding to report (page bloat issue). |
 
 ---
 
@@ -841,8 +1073,64 @@ SUMMARY
 
 ---
 
+## STRICT ENFORCEMENT - NON-NEGOTIABLE RULES
+
+These rules are MANDATORY on EVERY audit. Failure to follow these results in incomplete/invalid reports.
+
+1. **IMAGE ANALYSIS TABLE IS MANDATORY**
+   - MUST include complete table showing EVERY image on page
+   - MUST have all 9 columns: #, Filename, Format, Size, Alt, Width, Height, Loading, Issues
+   - NO exceptions - even if page has 100+ images, table must show all
+   - NO "summary instead of table" - table is the primary deliverable
+
+2. **FILE SIZES MUST BE FETCHED**
+   - Use curl -sI to get actual file size for each image URL
+   - Flag images >500KB as P1 (critical)
+   - Flag images 200-500KB as P2 (warning)
+   - If curl fails, still mark as "not specified" but note in issues
+
+3. **ALT TEXT MUST BE VERIFIED**
+   - Check every <img> tag for alt attribute
+   - "MISSING" = no alt attribute at all (P1)
+   - Empty alt="" = acceptable only for decorative images (flag if content image)
+   - Actual text = show first 40 characters
+
+4. **DIMENSIONS MUST BE EXTRACTED**
+   - Extract width and height from every <img> tag
+   - "missing" = either width OR height not present (P2 - CLS risk)
+   - Both present = show as "XXpx"
+
+5. **LAZY LOADING MUST BE CHECKED**
+   - "lazy" = loading="lazy" attribute present
+   - "not specified" = no loading attribute (P2 for below-fold images)
+   - Report all non-lazy images on page
+
+6. **ISSUES COLUMN MUST BE POPULATED**
+   - Every image must have issues column entry or "None"
+   - Use P1/P2/P3 severity labels
+   - Examples: "P1: No alt text", "P2: Missing dims", "P2: Not lazy"
+
+7. **OUTPUT FORMAT MUST BE FOLLOWED EXACTLY**
+   - Header must include total image count: "## IMAGE ANALYSIS (XX total images)"
+   - All sections must appear in order (SEO → Images → Links → Performance → Schema → Trademark → Content → QA → Responsive → Console → Fixes → Summary)
+   - Progress bars must use ███░░░ format
+   - Section scores must have exact format
+
+8. **TRADEMARK COMPLIANCE TABLE MUST SHOW VIOLATIONS**
+   - Must scan ALL text for trademark terms
+   - Must count both bare instances and instances with symbols
+   - Must calculate % compliance
+   - Must flag every bare instance as P1 or P1 CRITICAL
+
+---
+
 ## Version History
 
+- **v2.5.0** (2026-05-18): TRADEMARK SIMPLIFICATION UPDATE - Trademark compliance moved from separate scoring section to QA Checklist. Simplified check: if primary product name has ® or ™ symbol on first mention = PASS. Removed detailed trademark violation tracking. Scoring weights adjusted: On-Page 20%, Content 20%, Technical 12%, Schema 10%, Images 10%, QA 14%, Responsive 10%, Console 4%. Trademark no longer separate category (now part of QA checklist).
+
+- **v2.4.0** (2026-05-18): STRICT ENFORCEMENT UPDATE - All rules are now mandatory and non-negotiable. Image Analysis table MUST show every image with all 9 columns. File sizes MUST be fetched via curl. Alt text, dimensions, and lazy loading MUST be verified for every image. No exceptions for large pages (100+ images). Output format enforcement: 9 mandatory sections in exact order, progress bars required, signature footer required. Trademark compliance table must show all violations with %. Every audit must follow these rules without exception.
+
+- **v2.3.0** (2026-05-18): Updated Output Format to use CLEAN PLAIN-TEXT only (no markdown). All reports now use ASCII dividers, plain-text tables, and symbol indicators (✓/⚠️/❌). Removes markdown formatting issues for universal readability across all editors/viewers. Output saved as `.txt` files with structured sections.
 - **v2.2.0** (2026-05-18): Added Step 10 Responsive Test (viewport meta, srcset/sizes coverage, media queries, font sizes, touch targets, horizontal scroll risk). Added Step 11 Console & Code Quality (duplicate IDs, unclosed tags, deprecated elements, missing required attributes, JS error patterns — console.log, document.write, eval, mixed content, inline handlers). Updated scoring to 9 dimensions; weights rebalanced to 100%.
 - **v2.1.0** (2026-05-14): Switched from WebFetch to bash+curl+grep HTML parsing for reliable metadata extraction. Added comprehensive bash scripts for image inventory with file size detection. Improved accuracy of alt text, dimensions, and lazy loading detection. Enhanced image analysis to extract ALL images with complete details. Better error handling for timeout/connection issues.
 - **v2.0.0** (2026-05-13): Complete image analysis methodology with mandatory alt text, comprehensive checklist coverage, detailed scoring weights, improved error handling, common findings reference
