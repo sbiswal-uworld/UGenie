@@ -121,7 +121,7 @@ uworld-webgenie-commands/
 | Content Match | `/content-match` | Content / QA | Production-grade semantic diff — compares Google Docs/briefs against live page line-by-line — **requires Google Drive MCP** |
 | Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page with pixel-perfect fidelity scores — **requires Figma MCP** |
 | Table Compare | `/table-compare` | QA / Content | Cell-by-cell table comparison |
-| Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
+| Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML & CSS  |
 | Figma to Elementor | `/figma-to-elementor` | Developers | Converts Figma design to pixel-perfect Elementor JSON — **requires Figma MCP** |
 | Feature Table | `/feature-table` | Developers | Generates UWorld comparison table HTML |
 | GDoc to HTML | `/gdoc-to-html` | CMS / Content | Converts pasted Google Doc or Word content to clean UWorld-standard HTML |
@@ -336,14 +336,10 @@ LIVE TABLE (Page):
 /figma-to-code html
 [attach design screenshot]
 
-/figma-to-code react
-[attach design screenshot]
 
-/figma-to-code tailwind
-[attach design screenshot]
 ```
 
-**Returns:** Raw production-ready HTML+CSS, React component, or Tailwind HTML.
+**Returns:** Raw production-ready HTML+CSS.
 
 ---
 
