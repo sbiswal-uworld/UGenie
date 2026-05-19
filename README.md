@@ -118,8 +118,8 @@ uworld-webgenie-commands/
 |---|---|---|---|
 | Page Audit | `/page-audit` | QA Engineers | Full SEO, images, links, and schema audit on any URL |
 | CMS Formatter | `/cms-format` | CMS / Content | Converts raw CMS HTML to UWorld golden standard |
-| Content Match | `/content-match` | Content / QA | Compares brief/doc against live page, flags every discrepancy |
-| Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page |
+| Content Match | `/content-match` | Content / QA | Production-grade semantic diff — compares Google Docs/briefs against live page line-by-line — **requires Google Drive MCP** |
+| Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page with pixel-perfect fidelity scores — **requires Figma MCP** |
 | Table Compare | `/table-compare` | QA / Content | Cell-by-cell table comparison |
 | Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
 | Figma to Elementor | `/figma-to-elementor` | Developers | Converts Figma design to pixel-perfect Elementor JSON — **requires Figma MCP** |
@@ -234,31 +234,82 @@ C ) A measure of liquidity risk
 
 ### `/content-match` — Compare Brief vs Live Page
 
+> **v3.0.1** — Production-grade semantic content matching with line-by-line diff, similarity scoring, and trademark verification.
+>
+> ⚠️ **Google Drive MCP is required** to access Google Docs directly via URL. Without it, paste the CONTENT section text manually instead.
+
 ```
 /content-match <live-url>
-[paste your source brief or Google Doc content here]
+[paste the CONTENT section from your Google Doc or brief — no metadata]
 ```
 
 **Example:**
 ```
 /content-match https://finance.uworld.com/cfa/level-1/
-Hero headline: Pass the CFA® Level I Exam
-CTA button: Start Free Trial
-Price: $399
+[paste CONTENT section here — excludes SUMMARY, DEVELOPER NOTES, SEO OUTLINE, etc.]
 ```
 
-**Returns:** Section-by-section comparison table with MATCH/MISMATCH/MISSING status and P1/P2/P3 severity.
+**What it does:**
+
+1. Extracts **CONTENT section only** — automatically ignores metadata blocks (SUMMARY, DEVELOPER NOTES, SEO CONTENT OUTLINE, DESIGN DELIVERABLES, etc.)
+2. Parses both source and live page into semantic blocks (headings, paragraphs, lists, CTAs, tables)
+3. Runs **line-by-line semantic diff** using Jaro-Winkler + Levenshtein similarity scoring
+4. Returns a full side-by-side table with match status per line and overall match rate
+
+**Match statuses:** `EXACT` / `SIMILAR` / `CHANGED` / `MISSING` / `EXTRA` / `REORDERED`
+
+**Severity levels:**
+| Match Rate | Level |
+|---|---|
+| 90–100% | ✅ PASS |
+| 75–89% | ⚠️ NEEDS ATTENTION |
+| 50–74% | ❌ MAJOR ISSUES |
+| < 50% | 🚨 CRITICAL |
+
+**Returns:** Side-by-side comparison table, match rate %, trademark audit, and P1/P2/P3 action items.
+
+**Requirements:**
+
+| Requirement | Details |
+|---|---|
+| Google Drive MCP | Required to read Google Docs via URL. Without it, paste the CONTENT section text instead. |
+| Source input | Paste CONTENT section only — no metadata, no SUMMARY, no DEVELOPER NOTES |
+| Live URL | Any publicly accessible UWorld page URL |
 
 ---
 
 ### `/visual-diff` — Design vs Live Comparison
 
+> **v2.0.0** — Pixel-perfect design-to-live comparison using the Figma MCP API.
+>
+> ⚠️ **Figma MCP is required.** This skill extracts exact design tokens (colors, spacing, fonts, shadows) directly from Figma via MCP. It will not proceed without an active Figma MCP connection and a configured `FIGMA_ACCESS_TOKEN`.
+
 ```
-/visual-diff <live-url>
-[attach your Figma screenshot or design export]
+/visual-diff <figma-url> <live-url>
 ```
 
-**Returns:** Fidelity scores per section, design token comparison, full diff report.
+**Example:**
+```
+/visual-diff https://www.figma.com/design/AbCdEf123456/UWorld-Homepage?node-id=1-2 https://finance.uworld.com/cfa/
+```
+
+**What it does:**
+
+1. Extracts all design tokens from Figma via MCP (`get_design_context`) — colors, spacing, fonts, shadows, border-radius
+2. Captures live page at desktop (1280×800) and mobile (375×812) viewports
+3. Compares Figma values vs live computed CSS — section by section
+4. Returns fidelity % per section and a full Design Token Comparison Table
+
+**Returns:** Overall visual fidelity score, section-by-section fidelity breakdown, design token comparison table, component inventory, and P1/P2/P3 fix list.
+
+**Requirements:**
+
+| Requirement | Details |
+|---|---|
+| Figma MCP | **Must be connected** — skill will not proceed without it |
+| Figma Access Token | `FIGMA_ACCESS_TOKEN` must be set in your MCP config (Figma → Account Settings → Security → Personal access tokens) |
+| Figma URL | Must include `node-id` parameter pointing to the specific frame or section |
+| Live URL | Any publicly accessible page URL |
 
 ---
 
