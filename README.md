@@ -236,11 +236,11 @@ C ) A measure of liquidity risk
 
 > **v3.0.1** — Production-grade semantic content matching with line-by-line diff, similarity scoring, and trademark verification.
 >
-> ⚠️ **Google Drive MCP is required** to access Google Docs directly via URL. Without it, paste the CONTENT section text manually instead.
+> ⚠️ **Google Drive MCP is required** to access Google Docs directly via URL. Without it, paste the CONTENT section/Upload the content Doc manually instead.
 
 ```
 /content-match <live-url>
-[paste the CONTENT section from your Google Doc or brief — no metadata]
+[paste the CONTENT section from your Google Doc or brief — no metadata]/ Upload the content Doc
 ```
 
 **Example:**
