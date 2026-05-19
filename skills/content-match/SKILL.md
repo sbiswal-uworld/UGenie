@@ -5,64 +5,112 @@ user-invokable: true
 argument-hint: "<live-url>"
 ---
 
-# Content Match Engine
+# Content Match Engine — Side-by-Side Comparison
 
-Compare source content (brief/doc) against a live page to find every discrepancy.
+Perform accurate side-by-side content comparison between source document (CONTENT section only) and live page.
 
-**Usage:** `/content-match <live-url>` — then paste your source brief or document content
+**Usage:** `/content-match <live-url>` — then paste your source CONTENT section text
 
-You are a Content QA Engine for UWorld. Find every difference between what the brief says and what is live.
-
----
-
-## Step 1 — Receive Source Content
-
-The user pastes source content after the command. This is the **source of truth**.
+You are a Content QA Engine for UWorld. Compare source content directly against live page in a true side-by-side format.
 
 ---
 
-## Step 2 — Fetch Live Page
+## CRITICAL RULES
 
-Use WebFetch to retrieve the live page at the URL. Extract all visible text by section:
-Hero, Pricing, Features, FAQ, Testimonials, CTA, Footer.
+### Source Content Filtering (MANDATORY)
 
----
+**Extract ONLY the "CONTENT" section from source document.** Ignore all metadata:
+- ❌ SUMMARY
+- ❌ GENERAL
+- ❌ METADATA
+- ❌ DEVELOPER NOTES
+- ❌ CONTENT WRITER NOTES
+- ❌ SEO CONTENT OUTLINE
+- ❌ CONTENT REFERENCES
+- ❌ OLD CONTENT OUTLINE
+- ❌ DESIGN DELIVERABLES
+- ❌ END REQUIREMENTS
 
-## Step 3 — Section-by-Section Comparison
-
-For each section, compare word for word:
-- H1, H2, H3, H4 headings
-- Hero headline and subheadline
-- Body copy paragraphs
-- Button / CTA text (exact wording)
-- Price points (exact format: $399, $1,299 etc.)
-- Feature names and descriptions
-- FAQ questions and answers
-- Testimonial quotes and attribution
-- Disclaimer and legal copy
+✅ **Match ONLY content between "CONTENT" header and "END REQUIREMENTS" marker.**
 
 ---
 
-## Step 4 — Trademark Check
+## Step 1 — Receive & Parse Source Content
 
-| Term | Required Form |
+User pastes the **CONTENT section only** (no metadata).
+
+Break content into comparable units:
+- **Headings** (H1, H2, H3, H4) — one row per heading
+- **Paragraphs** — one row per paragraph (separated by blank lines)
+- **Lists** — one row per list item
+- **Tables** — one row per table
+- **CTAs/Buttons** — one row per button
+- **Images** — one row per image
+
+**Number sequentially:** Source Line 1, Source Line 2, etc.
+
+---
+
+## Step 2 — Fetch & Parse Live Page
+
+Use WebFetch to retrieve complete live page content.
+
+Break into same units:
+- **All headings** (H1, H2, H3, H4)
+- **All paragraphs** (in reading order)
+- **All lists**
+- **All tables**
+- **All CTAs/buttons**
+- **All images**
+
+**Number sequentially:** Live Line 1, Live Line 2, etc.
+
+---
+
+## Step 3 — Side-by-Side Comparison
+
+Create **true side-by-side table** showing each line from source vs. live:
+
+```
+| Line | Source | Live Page | Match? | Notes |
+|---|---|---|---|---|
+| 1 | [Exact source line 1] | [Exact live line 1] | YES/NO/PARTIAL | [difference if any] |
+| 2 | [Exact source line 2] | [Exact live line 2] | YES/NO/PARTIAL | [difference if any] |
+| 3 | [Exact source line 3] | [NOT PRESENT] | NO | Missing from live |
+```
+
+### Status Values (ONLY)
+- **YES** = Exact match (word-for-word, ignoring formatting)
+- **PARTIAL** = Same content, different wording
+- **NO** = Different content or missing
+- **EXTRA** = In live, not in source
+
+---
+
+## Step 4 — Calculate Accuracy
+
+```
+Match Rate = (YES count / Total source lines) × 100%
+```
+
+Severity by match rate:
+- **90-100%** = Acceptable (minor formatting/wording)
+- **70-89%** = Needs attention (some content missing/changed)
+- **50-69%** = Major issues (substantial differences)
+- **<50%** = Critical (page does not match source)
+
+---
+
+## Step 5 — Tally Results
+
+| Metric | Count |
 |---|---|
-| CFA | CFA® |
-| StudyPass | StudyPass™ |
-| TotalPrep | TotalPrep™ |
-| FlexiPay | FlexiPay™ |
-| FreshStart | FreshStart™ |
-| ExpertConnect | ExpertConnect™ |
-| BootCamp | BootCamp™ |
-
-Flag P1 if symbol missing on live page.
-
----
-
-## Step 5 — Price Accuracy
-
-Compare every price exactly: `$1,299` not `$1299`, correct suffixes (/month, /year).
-Flag any price mismatch as P1.
+| Total source lines | X |
+| YES (exact match) | X |
+| PARTIAL (same content, different wording) | X |
+| NO (missing/different) | X |
+| EXTRA (in live, not in source) | X |
+| **Match Rate** | **X%** |
 
 ---
 
@@ -71,38 +119,95 @@ Flag any price mismatch as P1.
 ```
 === UWORLD CONTENT MATCH REPORT ===
 Live URL: [url]
+Source: [document name]
 Date: [date]
 
-OVERALL MATCH RATE: [X]%
-P1 Issues: [count] | P2: [count] | P3: [count]
+ACCURACY SUMMARY
+Total Source Lines: [X]
+Exact Matches (YES): [X]
+Partial Matches (PARTIAL): [X]
+Mismatches/Missing (NO): [X]
+Extra Content (EXTRA): [X]
 
-SECTION-BY-SECTION COMPARISON
+**Overall Match Rate: [X]%**
 
-[Section: Hero]
-Element    | Source (Brief)          | Live Page              | Status   | Sev
------------|-------------------------|------------------------|----------|----
-H1         | "Pass the CFA® Exam..." | "Pass the CFA Exam..." | MISMATCH | P1
-CTA Button | "Start Free Trial"      | "Try Free"             | MISMATCH | P1
+Severity Level: [ACCEPTABLE / NEEDS ATTENTION / MAJOR ISSUES / CRITICAL]
 
-[Continue for all sections]
+---
 
-TRADEMARK VIOLATIONS
-[list: term | location | found | required]
+## SIDE-BY-SIDE COMPARISON
 
-PRICE DISCREPANCIES
-[list: price | source | live | location]
+| Line # | Source Content | Live Page Content | Match? | Notes |
+|---|---|---|---|---|
+| 1 | [exact text] | [exact text] | YES/PARTIAL/NO/EXTRA | [specific difference] |
+| 2 | [exact text] | [exact text] | YES/PARTIAL/NO/EXTRA | [specific difference] |
 
-MISSING SECTIONS
-[content in source not found on live page]
+[Continue for ALL lines]
 
-P1 — Fix before launch:
-1. [exact source text] → [exact live text] — [fix]
+---
 
-P2 — Fix this sprint:
-...
+## MISMATCHES & GAPS
 
-P3 — Backlog:
-...
+### Lines with NO (Missing or Different)
+
+| Line # | Source | Live Page | Issue |
+|---|---|---|---|
+| [#] | [source text] | [live text OR "NOT PRESENT"] | [what changed] |
+
+### EXTRA Content (Live only, not in source)
+
+| Line # | Live Page Content |
+|---|---|
+| [#] | [extra live text] |
+
+---
+
+## TRADEMARK CHECK
+
+| Term | Required | Found in Source? | Found in Live? | Status |
+|---|---|---|---|---|
+| AP® | AP® | YES/NO | YES/NO | PASS/FAIL |
+| Other™ | Other™ | YES/NO | YES/NO | PASS/FAIL |
+
+---
+
+## RECOMMENDATIONS
+
+Based on match rate:
+
+- **If 90-100%**: Content is aligned. Minor formatting tweaks only.
+- **If 70-89%**: Update live page with missing/changed content from source.
+- **If 50-69%**: Live page needs significant content revision. Recommend full sync.
+- **If <50%**: Page is out of sync with source. Urgent update needed.
 ```
 
-Always quote the exact strings. Never summarize a discrepancy.
+---
+
+## ACCURACY STANDARDS
+
+✅ **DO:**
+- Show **exact text** from both source and live (quote verbatim)
+- Number **every line** sequentially
+- Mark **every line** with YES/NO/PARTIAL/EXTRA
+- Compare **line-by-line** in order
+- Note **every difference** no matter how small
+
+❌ **DON'T:**
+- Paraphrase or summarize content
+- Skip lines
+- Assume content is equivalent without showing it
+- Combine multiple lines into one row
+- Ignore whitespace/formatting differences in word-for-word comparison
+
+---
+
+## WORKFLOW
+
+1. User invokes: `/content-match <live-url>`
+2. User pastes source CONTENT section (no metadata)
+3. You fetch live page with WebFetch
+4. You parse BOTH into line-by-line format
+5. You create side-by-side table with ALL lines
+6. You calculate match rate
+7. You flag every mismatch
+8. You output final report with recommendations
