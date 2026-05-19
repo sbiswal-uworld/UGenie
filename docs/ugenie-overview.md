@@ -1,5 +1,5 @@
 # UGenie — UWorld WebGenie Skills
-### Claude Code Slash Commands for the UWorld Web Team
+### Claude Code Slash Commands for the UWorld Web Development Team
 
 ---
 
