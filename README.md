@@ -1,6 +1,6 @@
 # 🧠 UWorld WebGenie — Claude Code Skills
 
-> **9 production-ready Claude Code slash commands** for the UWorld web team.  
+> **9 production-ready Claude Code slash commands** for the UWorld Web Development team.  
 > No API key. No extra cost. Works on every team member's machine instantly.
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-6B46C1?style=for-the-badge&logo=anthropic&logoColor=white)
