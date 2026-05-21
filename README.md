@@ -1,6 +1,6 @@
 # 🧠 UWorld WebGenie — Claude Code Skills
 
-> **9 production-ready Claude Code slash commands** for the UWorld Web Development team.  
+> **9 production-ready Claude Code slash commands** for the UWorld web team.  
 > No API key. No extra cost. Works on every team member's machine instantly.
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-6B46C1?style=for-the-badge&logo=anthropic&logoColor=white)
@@ -118,10 +118,10 @@ uworld-webgenie-commands/
 |---|---|---|---|
 | Page Audit | `/page-audit` | QA Engineers | Full SEO, images, links, and schema audit on any URL |
 | CMS Formatter | `/cms-format` | CMS / Content | Converts raw CMS HTML to UWorld golden standard |
-| Content Match | `/content-match` | Content / QA | Production-grade semantic diff — compares Google Docs/briefs against live page line-by-line — **requires Google Drive MCP** |
+| Content Match | `/content-match` | Content / QA | **v4.0.0** — Full compliance audit: semantic diff + Elementor ID tracking + link audit + error classification (❌ Fail / ⚠️ PMM) + 4 structured reports — **Google Drive MCP recommended** |
 | Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page with pixel-perfect fidelity scores — **requires Figma MCP** |
 | Table Compare | `/table-compare` | QA / Content | Cell-by-cell table comparison |
-| Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML & CSS  |
+| Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
 | Figma to Elementor | `/figma-to-elementor` | Developers | Converts Figma design to pixel-perfect Elementor JSON — **requires Figma MCP** |
 | Feature Table | `/feature-table` | Developers | Generates UWorld comparison table HTML |
 | GDoc to HTML | `/gdoc-to-html` | CMS / Content | Converts pasted Google Doc or Word content to clean UWorld-standard HTML |
@@ -187,7 +187,7 @@ Open a new terminal and run:
 claude
 ```
 
-Type `/` — you should see all 8 skills appear in the autocomplete menu.
+Type `/` — you should see all 9 skills appear in the autocomplete menu.
 
 ---
 
@@ -232,48 +232,66 @@ C ) A measure of liquidity risk
 
 ---
 
-### `/content-match` — Compare Brief vs Live Page
+### `/content-match` — Full Compliance Audit (Brief vs Live Page)
 
-> **v3.0.1** — Production-grade semantic content matching with line-by-line diff, similarity scoring, and trademark verification.
+> **v4.0.0** — Full compliance audit engine. Compares every element of the approved source document against the live Elementor page. Every mismatch is flagged, classified, and reported with actionable fixes across 4 structured reports.
 >
-> ⚠️ **Google Drive MCP is required** to access Google Docs directly via URL. Without it, paste the CONTENT section/Upload the content Doc manually instead.
+> ⚠️ **Google Drive MCP is recommended** to access Google Docs directly via URL. Without it, paste the CONTENT section text manually instead.
+
+**Three ways to provide source content:**
 
 ```
-/content-match <live-url>
-[paste the CONTENT section from your Google Doc or brief — no metadata]/ Upload the content Doc
-```
+# Option 1 — Google Doc URL (recommended, requires Google Drive MCP)
+/content-match https://finance.uworld.com/cfa/level-1/ https://docs.google.com/document/d/[ID]/edit
 
-**Example:**
-```
+# Option 2 — Paste CONTENT section
 /content-match https://finance.uworld.com/cfa/level-1/
 [paste CONTENT section here — excludes SUMMARY, DEVELOPER NOTES, SEO OUTLINE, etc.]
+
+# Option 3 — Public Google Doc link
+/content-match https://finance.uworld.com/cfa/level-1/ https://docs.google.com/document/d/[ID]/edit?usp=sharing
 ```
 
 **What it does:**
 
-1. Extracts **CONTENT section only** — automatically ignores metadata blocks (SUMMARY, DEVELOPER NOTES, SEO CONTENT OUTLINE, DESIGN DELIVERABLES, etc.)
-2. Parses both source and live page into semantic blocks (headings, paragraphs, lists, CTAs, tables)
-3. Runs **line-by-line semantic diff** using Jaro-Winkler + Levenshtein similarity scoring
-4. Returns a full side-by-side table with match status per line and overall match rate
+1. **Auto-fetches** source document via Google Drive MCP (any access level) or curl — never asks you to manually copy-paste
+2. Extracts **CONTENT section only** — ignores SUMMARY, DEVELOPER NOTES, SEO OUTLINE, DESIGN DELIVERABLES, etc.
+3. Parses both source and live page into typed semantic blocks (H1/H2/H3, paragraphs, lists, CTAs, tables, FAQs, testimonials, disclaimers)
+4. Runs **line-by-line semantic diff** using Jaro-Winkler + Levenshtein similarity scoring
+5. Tracks **Elementor element IDs** (`data-id`) for every live page element
+6. Audits **every link** for `target="_blank"` (external) and `rel="noopener noreferrer"` rules
+7. Classifies every mismatch as ❌ FAIL (HTML error) or ⚠️ PMM (source doc error)
+8. Generates **4 structured reports**: Checkbox Audit Table, Quick Fix List, PMM List, Summary KPI
 
 **Match statuses:** `EXACT` / `SIMILAR` / `CHANGED` / `MISSING` / `EXTRA` / `REORDERED`
 
-**Severity levels:**
-| Match Rate | Level |
-|---|---|
-| 90–100% | ✅ PASS |
-| 75–89% | ⚠️ NEEDS ATTENTION |
-| 50–74% | ❌ MAJOR ISSUES |
-| < 50% | 🚨 CRITICAL |
+**Error classifications:**
+| Code | Meaning | Who Fixes It |
+|---|---|---|
+| ✅ PASS | Perfect match | — |
+| ❌ FAIL | HTML differs from approved doc | Developer / CMS |
+| ⚠️ PMM | Error in BOTH doc AND live — source needs correction | Content / PMM |
+| 🔗 LINK-FAIL | Link rule violation (wrong `target`, missing `rel`) | Developer |
+| 🔴 P1 | Critical: brand, pricing, trademark, heading level | Fix immediately |
+| 🟡 P2 | High: content mismatch, list order, CTA URL | Fix this sprint |
+| 🟢 P3 | Medium: minor wording, whitespace, formatting | Fix next sprint |
 
-**Returns:** Side-by-side comparison table, match rate %, trademark audit, and P1/P2/P3 action items.
+**Severity levels:**
+| Pass Rate | Level |
+|---|---|
+| 95–100% | ✅ PASS |
+| 85–94% | ⚠️ NEEDS ATTENTION |
+| 70–84% | ❌ MAJOR ISSUES |
+| < 70% | 🚨 CRITICAL |
+
+**Returns:** 4 reports — Checkbox Audit Table (every element), Quick Fix List (P1/P2/P3 dev fixes), PMM List (source doc errors), Summary KPI counts + Visual Diff (diffchecker-style side-by-side for all changed/missing blocks) + Trademark & Legal Audit (19 UWorld product names).
 
 **Requirements:**
 
 | Requirement | Details |
 |---|---|
-| Google Drive MCP | Required to read Google Docs via URL. Without it, paste the CONTENT section text instead. |
-| Source input | Paste CONTENT section only — no metadata, no SUMMARY, no DEVELOPER NOTES |
+| Google Drive MCP | Recommended — enables direct Google Doc access at any sharing level. Without it, paste CONTENT section manually. |
+| Source input | CONTENT section only — no metadata, no SUMMARY, no DEVELOPER NOTES |
 | Live URL | Any publicly accessible UWorld page URL |
 
 ---
@@ -336,10 +354,14 @@ LIVE TABLE (Page):
 /figma-to-code html
 [attach design screenshot]
 
+/figma-to-code react
+[attach design screenshot]
 
+/figma-to-code tailwind
+[attach design screenshot]
 ```
 
-**Returns:** Raw production-ready HTML+CSS.
+**Returns:** Raw production-ready HTML+CSS, React component, or Tailwind HTML.
 
 ---
 
