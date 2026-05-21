@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git branch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)",
+      "Bash(git fetch *)",
+      "Bash(bash install.sh)",
+      "Bash(bash update.sh)",
+      "Bash(bash *.sh)",
+      "Bash(cp *)",
+      "Bash(claude --version)",
+      "Bash(curl -s *)",
+      "Read(~/.claude/skills/**)",
+      "Read(~/.claude/commands/**)"
+    ]
+  }
+}

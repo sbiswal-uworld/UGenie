@@ -39,6 +39,9 @@ SKILLS=(
 updated=0
 skipped=0
 
+echo "Checking skills..."
+echo ""
+
 for skill in "${SKILLS[@]}"; do
   src="$SOURCE_DIR/$skill/SKILL.md"
   dst_dir="$SKILLS_DIR/$skill"
@@ -52,32 +55,51 @@ for skill in "${SKILLS[@]}"; do
     continue
   fi
 
+  # ── Extract version from repo SKILL.md ────────────────────────────────────
+  new_ver=$(grep -m1 '^version:' "$src" 2>/dev/null | awk '{print $2}' || true)
+
+  # ── Extract version currently installed ───────────────────────────────────
+  old_ver=""
+  if [[ -f "$dst" ]]; then
+    old_ver=$(grep -m1 '^version:' "$dst" 2>/dev/null | awk '{print $2}' || true)
+  fi
+
   mkdir -p "$dst_dir"
 
-  # Update ~/.claude/skills/<name>/SKILL.md
+  # ── Update ~/.claude/skills/<name>/SKILL.md ───────────────────────────────
   if [[ ! -f "$dst" ]] || ! cmp -s "$src" "$dst"; then
     cp "$src" "$dst"
     skill_changed=true
   fi
 
-  # Update ~/.claude/commands/<name>.md
+  # ── Update ~/.claude/commands/<name>.md ───────────────────────────────────
   if [[ ! -f "$cmd" ]] || ! cmp -s "$src" "$cmd"; then
     cp "$src" "$cmd"
     skill_changed=true
   fi
 
   if $skill_changed; then
-    echo "  ✓     /$skill  (updated)"
+    if [[ -n "$old_ver" && -n "$new_ver" && "$old_ver" != "$new_ver" ]]; then
+      echo "  ✓     /$skill  (v$old_ver → v$new_ver)"
+    elif [[ -n "$new_ver" ]]; then
+      echo "  ✓     /$skill  (updated  v$new_ver)"
+    else
+      echo "  ✓     /$skill  (updated)"
+    fi
     ((updated++)) || true
   else
-    echo "  --    /$skill  (no changes)"
+    if [[ -n "$new_ver" ]]; then
+      echo "  --    /$skill  (v$new_ver — no changes)"
+    else
+      echo "  --    /$skill  (no changes)"
+    fi
     ((skipped++)) || true
   fi
 done
 
 echo ""
 echo "══════════════════════════════════════════════════════"
-echo "  Done: $updated updated, $skipped unchanged"
+printf "  Done: %d updated, %d unchanged\n" "$updated" "$skipped"
 echo "  Changes take effect immediately — no restart needed."
 echo "══════════════════════════════════════════════════════"
 echo ""
