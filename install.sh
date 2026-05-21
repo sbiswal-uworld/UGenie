@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# UWorld WebGenie — Claude Code Commands Installer
+# UWorld WebGenie — Claude Code Skills Installer
 # Run this ONCE on each team member's machine.
 # Usage: bash install.sh
 
@@ -48,6 +48,8 @@ echo ""
 echo "Installing skills..."
 echo ""
 
+installed=0
+
 for skill in "${SKILLS[@]}"; do
   src="$SOURCE_DIR/$skill/SKILL.md"
 
@@ -55,6 +57,10 @@ for skill in "${SKILLS[@]}"; do
     echo "  SKIP  /$skill  (source SKILL.md not found)"
     continue
   fi
+
+  # ── Extract version from SKILL.md frontmatter (if present) ────────────────
+  ver=$(grep -m1 '^version:' "$src" 2>/dev/null | awk '{print $2}' || true)
+  ver_label=${ver:+" v$ver"}
 
   # ── Copy to ~/.claude/skills/<name>/SKILL.md ──────────────────────────────
   dst_dir="$SKILLS_DIR/$skill"
@@ -72,24 +78,28 @@ for skill in "${SKILLS[@]}"; do
   fi
   cp "$src" "$cmd"
 
-  echo "  ✓     /$skill"
+  echo "  ✓     /$skill${ver_label}"
+  ((installed++)) || true
 done
 
 echo ""
 echo "══════════════════════════════════════════════════════"
-echo "  Installation complete! 9 skills installed."
+printf "  Installation complete! %d skills installed.\n" "$installed"
 echo ""
 echo "  Type / in Claude Code to see all commands:"
 echo ""
-echo "    /page-audit          — Full page QA audit"
-echo "    /cms-format          — Format CMS question HTML"
-echo "    /content-match       — Compare brief vs live page"
-echo "    /visual-diff         — Design vs live comparison"
-echo "    /table-compare       — Cell-by-cell table comparison"
-echo "    /figma-to-code       — Design screenshot to code"
-echo "    /figma-to-elementor  — Figma design to Elementor JSON"
-echo "    /feature-table       — Generate comparison table HTML"
-echo "    /gdoc-to-html        — Google Doc / Word to HTML"
+echo "    /page-audit          v2.5.0  — Full SEO + QA audit (9 dimensions)"
+echo "    /cms-format                  — Format CMS question HTML to UWorld standard"
+echo "    /content-match       v4.0.0  — Full compliance audit: brief vs live page"
+echo "                                   (Google Drive MCP recommended)"
+echo "    /visual-diff         v2.0.0  — Figma design vs live comparison"
+echo "                                   (Figma MCP required)"
+echo "    /table-compare               — Cell-by-cell table comparison"
+echo "    /figma-to-code               — Design screenshot → HTML / React / Tailwind"
+echo "    /figma-to-elementor          — Figma design → Elementor JSON"
+echo "                                   (Figma MCP required)"
+echo "    /feature-table               — Generate UWorld comparison table HTML"
+echo "    /gdoc-to-html                — Google Doc / Word → UWorld-standard HTML"
 echo ""
 echo "  To update skills later, run: bash update.sh"
 echo "══════════════════════════════════════════════════════"

@@ -1,8 +1,40 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Get-ChildItem \"C:\\\\Users\\\\sbiswal\\\\Downloads\\\\UGenie-main\\\\UGenie-main\")",
-      "Bash(Select-Object Name, LastWriteTime)"
+      "Bash(git add *)",
+      "Bash(git rm *)",
+      "Bash(git commit *)",
+      "Bash(git commit -m *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git fetch *)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)",
+      "Bash(git stash *)",
+      "Bash(git config *)",
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git branch *)",
+      "Bash(claude --version)",
+      "Bash(bash install.sh)",
+      "Bash(bash update.sh)",
+      "Bash(bash *.sh)",
+      "Bash(cp *)",
+      "Bash(cat)",
+      "Bash(node *)",
+      "Bash(node -e *)",
+      "Bash(node generate.js)",
+      "Bash(npm install *)",
+      "Bash(curl -s *)",
+      "Read(//c/Users/sbiswal/.claude/skills/**)",
+      "Read(//c/Users/sbiswal/.claude/commands/**)",
+      "Read(//tmp/**)",
+      "WebFetch(domain:collegeprep.uworld.com)",
+      "WebFetch(domain:gradschool.uworld.com)",
+      "WebFetch(domain:finance.uworld.com)",
+      "WebFetch(domain:legal.uworld.com)",
+      "WebFetch(domain:uworld.com)"
     ]
   }
 }
