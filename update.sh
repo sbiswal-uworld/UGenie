@@ -28,6 +28,7 @@ SKILLS=(
   "page-audit"
   "cms-format"
   "content-match"
+  "QA-content-verify"
   "visual-diff"
   "table-compare"
   "figma-to-code"
