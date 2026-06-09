@@ -1,10 +1,10 @@
 # 🧠 UWorld WebGenie — Claude Code Skills
 
-> **9 production-ready Claude Code slash commands** for the UWorld web team.  
+> **10 production-ready Claude Code slash commands** for the UWorld web team.  
 > No API key. No extra cost. Works on every team member's machine instantly.
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-6B46C1?style=for-the-badge&logo=anthropic&logoColor=white)
-![Skills](https://img.shields.io/badge/Skills-9%20Commands-0066CC?style=for-the-badge)
+![Skills](https://img.shields.io/badge/Skills-10%20Commands-0066CC?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux-28A745?style=for-the-badge)
 
 ---
@@ -14,7 +14,7 @@
 1. [What Are Claude Code Skills?](#1-what-are-claude-code-skills)
 2. [Prerequisites](#2-prerequisites)
 3. [Repository Structure](#3-repository-structure)
-4. [The 9 Skills](#4-the-9-skills)
+4. [The 10 Skills](#4-the-10-skills)
 5. [Installation Guide](#5-installation-guide)
 6. [How to Use Each Skill](#6-how-to-use-each-skill)
 7. [How to Create a New Skill](#7-how-to-create-a-new-skill)
@@ -83,12 +83,14 @@ uworld-webgenie-commands/
 ├── 📄 install.sh             ← Run once to install all skills
 ├── 📄 update.sh              ← Run after git pull to update
 │
-├── 📁 skills/                ← Source files for all 9 skills
+├── 📁 skills/                ← Source files for all 10 skills
 │   ├── page-audit/
 │   │   └── SKILL.md
 │   ├── cms-format/
 │   │   └── SKILL.md
 │   ├── content-match/
+│   │   └── SKILL.md
+│   ├── QA-content-verify/
 │   │   └── SKILL.md
 │   ├── visual-diff/
 │   │   └── SKILL.md
@@ -112,13 +114,14 @@ uworld-webgenie-commands/
 
 ---
 
-## 4. The 9 Skills
+## 4. The 10 Skills
 
 | Skill | Command | Role | What It Does |
 |---|---|---|---|
 | Page Audit | `/page-audit` | QA Engineers | Full SEO, images, links, and schema audit on any URL |
 | CMS Formatter | `/cms-format` | CMS / Content | Converts raw CMS HTML to UWorld golden standard |
 | Content Match | `/content-match` | Content / QA | **v4.0.0** — Full compliance audit: semantic diff + Elementor ID tracking + link audit + error classification (❌ Fail / ⚠️ PMM) + 4 structured reports — **Google Drive MCP recommended** |
+| **QA Content Verify** | **`/QA-content-verify`** | **QA / PMM** | **v1.0.0** — Senior QA audit: Line-by-line verification of source docs vs live Elementor HTML with checkbox tables, Quick Fix List, PMM List — **9 content categories** |
 | Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page with pixel-perfect fidelity scores — **requires Figma MCP** |
 | Table Compare | `/table-compare` | QA / Content | Cell-by-cell table comparison |
 | Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
@@ -167,6 +170,7 @@ Installing skills...
   ✓     /page-audit
   ✓     /cms-format
   ✓     /content-match
+  ✓     /QA-content-verify
   ✓     /visual-diff
   ✓     /table-compare
   ✓     /figma-to-code
@@ -175,7 +179,7 @@ Installing skills...
   ✓     /gdoc-to-html
 
 ══════════════════════════════════════════════════════
-  Installation complete! 9 skills installed.
+  Installation complete! 10 skills installed.
 ══════════════════════════════════════════════════════
 ```
 
@@ -187,7 +191,7 @@ Open a new terminal and run:
 claude
 ```
 
-Type `/` — you should see all 9 skills appear in the autocomplete menu.
+Type `/` — you should see all 10 skills appear in the autocomplete menu.
 
 ---
 
@@ -293,6 +297,92 @@ C ) A measure of liquidity risk
 | Google Drive MCP | Recommended — enables direct Google Doc access at any sharing level. Without it, paste CONTENT section manually. |
 | Source input | CONTENT section only — no metadata, no SUMMARY, no DEVELOPER NOTES |
 | Live URL | Any publicly accessible UWorld page URL |
+
+---
+
+### `/QA-content-verify` — Senior QA Content Audit
+
+> **v1.0.0** — Line-by-line QA verification of source documents against live Elementor HTML. Professional checkpoint audit with checkbox tables, Quick Fix lists, and PMM flagging.
+
+```
+/QA-content-verify
+
+Internal Domain: [your-domain.uworld.com]
+Page URL: [full page URL]
+
+[PASTE SOURCE DOCUMENT]
+
+[PASTE ELEMENTOR HTML]
+```
+
+**Example:**
+```
+/QA-content-verify
+
+Internal Domain: finance.uworld.com
+Page URL: https://finance.uworld.com/cfa-level-1/study-guides/
+
+# SOURCE DOCUMENT
+H1: CFA Level 1 Study Books & Guides
+Price: $299 starting at $27/month with Affirm
+Button: Buy Now
+
+# ELEMENTOR HTML
+<h1>CFA Level 1 Study Books & Guides</h1>
+...
+```
+
+**What it does:**
+
+1. **9 Content Categories Audited:**
+   - Text content (headings H1/H2/H3, body paragraphs, lists, inline formatting)
+   - Structured content (tables, FAQ Q&A, mobile accordion variations)
+   - Media (images, alt text, captions)
+   - CTAs & Links (button text, URLs, `target="_blank"` compliance)
+   - Icons (Font Awesome class validation)
+   - Pricing & JS-rendered values
+   - Popups & Modals
+   - Missing sections (bidirectional check)
+   - Document-level issues (PMM flagging for source doc errors)
+
+2. **Professional Output:**
+   - Section-by-section checkbox tables (Check # | What | Status | Element ID | Doc Says | HTML Says | Action)
+   - Quick Fix List (❌ Fail items sorted top-to-bottom, P1/P2/P3 severity)
+   - PMM List (⚠️ items for content team review)
+   - Summary Counts (Total Pass / Fail / PMM)
+
+3. **Key Features:**
+   - Elementor element ID tracking on every row
+   - Character-level accuracy (spaces, punctuation, trademarks ® ™)
+   - One issue per row (never combines multiple failures)
+   - Desktop + Mobile dual-audit support (separate rows per version)
+   - Global check numbering across all sections
+   - Strict "Match" shorthand for identical Pass rows
+
+**Status Classifications:**
+| Status | Meaning | Action | Owner |
+|---|---|---|---|
+| ✅ **Pass** | Content matches exactly | None | — |
+| ❌ **Fail** | HTML differs from source doc | Developer fixes | Dev Team |
+| ⚠️ **PMM** | Error in BOTH doc and HTML — source needs approval | Content team reviews | PMM / Content |
+
+**Link Audit Rules:**
+| Link Type | Requirement | Violation |
+|---|---|---|
+| External | Must have `target="_blank"` | ❌ Fail |
+| Internal | Must NOT have `target="_blank"` | ❌ Fail |
+
+**Returns:** Complete audit report with all sections checked, no skips, actionable fixes, and clear ownership (Dev vs. PMM).
+
+**Time savings:** ~30 min audit → Catches 100% of content mismatches before launch.
+
+**Requirements:**
+
+| Requirement | Details |
+|---|---|
+| Source document | Pasted text or HTML content (Google Doc, brief, specification) |
+| Live page HTML | Elementor HTML (section or full page) |
+| Internal domain | Your domain name (e.g., `finance.uworld.com`) for link auditing |
 
 ---
 
