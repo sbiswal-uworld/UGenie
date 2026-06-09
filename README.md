@@ -121,7 +121,7 @@ uworld-webgenie-commands/
 | Page Audit | `/page-audit` | QA Engineers | Full SEO, images, links, and schema audit on any URL |
 | CMS Formatter | `/cms-format` | CMS / Content | Converts raw CMS HTML to UWorld golden standard |
 | Content Match | `/content-match` | Content / QA | **v4.0.0** — Full compliance audit: semantic diff + Elementor ID tracking + link audit + error classification (❌ Fail / ⚠️ PMM) + 4 structured reports — **Google Drive MCP recommended** |
-| **QA Content Verify** | **`/QA-content-verify`** | **QA / PMM** | **v1.0.0** — Senior QA audit: Line-by-line verification of source docs vs live Elementor HTML with checkbox tables, Quick Fix List, PMM List — **9 content categories** |
+| **QA Content Verify** | **`/QA-content-verify`** | **QA / PMM** | **v1.0.0** — Manual QA audit: Line-by-line verification of source docs vs live Elementor HTML with checkbox tables, Quick Fix List, PMM List — **9 content categories** |
 | Visual Diff | `/visual-diff` | QA / Dev | Compares Figma design vs live page with pixel-perfect fidelity scores — **requires Figma MCP** |
 | Table Compare | `/table-compare` | QA / Content | Cell-by-cell table comparison |
 | Figma to Code | `/figma-to-code` | Developers | Converts design screenshot to HTML/Tailwind/React |
@@ -300,7 +300,7 @@ C ) A measure of liquidity risk
 
 ---
 
-### `/QA-content-verify` — Senior QA Content Audit
+### `/QA-content-verify` — Manual QA Content Audit
 
 > **v1.0.0** — Line-by-line QA verification of source documents against live Elementor HTML. Professional checkpoint audit with checkbox tables, Quick Fix lists, and PMM flagging.
 
