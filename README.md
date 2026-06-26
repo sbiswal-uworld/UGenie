@@ -128,6 +128,7 @@ uworld-webgenie-commands/
 | Figma to Elementor | `/figma-to-elementor` | Developers | Converts Figma design to pixel-perfect Elementor JSON — **requires Figma MCP** |
 | Feature Table | `/feature-table` | Developers | Generates UWorld comparison table HTML |
 | GDoc to HTML | `/gdoc-to-html` | CMS / Content | Converts pasted Google Doc or Word content to clean UWorld-standard HTML |
+| CWV Audit | `/cwv-audit` | Dev / QA | Core Web Vitals & PageSpeed audit for WordPress/Elementor/WP Rocket — field-data-first optimization plan after page development |
 
 ---
 
@@ -552,6 +553,43 @@ Applies the UWorld Golden HTML Rule Set — strictly, in order:
 | Input | Paste raw Google Doc text, exported HTML, or any mixed content |
 | Headings | Tag with `[H2]` or `[H3]` in the text if not already `<h2>`/`<h3>` tags |
 | Links | Internal UWorld links are auto-detected; all others get `target="_blank"` |
+
+---
+
+### `/cwv-audit` — Core Web Vitals & PageSpeed Audit
+
+```
+/cwv-audit <page-url> [benchmark-url]
+[attach: PSI mobile+desktop (field+lab), GTmetrix, WP Rocket settings JSON, view-source]
+```
+
+**Example:**
+```
+/cwv-audit https://finance.uworld.com/cfa/level-1/courses/
+```
+
+**What it does:**
+
+Acts as a senior WordPress performance engineer and produces a prioritized, root-cause-driven plan to pass Core Web Vitals (mobile-first) on the WordPress + Astra + Elementor Pro + WP Rocket + Cloudflare stack — without breaking client-side pricing, Affirm widgets, sample quizzes, popups, or nested Elementor widgets. Field-data-first methodology:
+
+1. Reads field vs lab correctly (FCP→LCP gap diagnostic)
+2. Confirms the LCP element per device before prescribing fixes
+3. Image/LCP rules — real `<img>`, `fetchpriority="high"`, right-sizing, lazy-load exclusions
+4. WP Rocket settings audit — Delay JS exclusion list, Remove Unused CSS, Critical CSS
+5. Fonts (Typekit/Adobe `font-display: swap`, Font Awesome)
+6. INP / TBT / DOM (`content-visibility`, jQuery Migrate, long tasks)
+7. TTFB / server (cache footer, Cloudflare HTML caching)
+8. Benchmark comparison against a passing sibling page
+
+**Returns:** Scorecard, root-cause table, prioritized P0/P1/P2 fixes, functionality QA checklist, rollback map, and a "what NOT to chase" list.
+
+**Requirements:**
+
+| Requirement | Details |
+|---|---|
+| URL | Live page URL (the skill fetches the HTML for structural analysis) |
+| PSI data | Attach PageSpeed Insights mobile + desktop — both **field (CrUX)** and **lab (Lighthouse)** — to finalize the scorecard and confirm the LCP element |
+| WP Rocket | Settings export (JSON) recommended to verify Delay JS / RUCSS / cache config |
 
 ---
 
