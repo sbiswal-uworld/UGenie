@@ -1,10 +1,10 @@
 # 🧠 UWorld WebGenie — Claude Code Skills
 
-> **10 production-ready Claude Code slash commands** for the UWorld web team.  
+> **11 production-ready Claude Code slash commands** for the UWorld web team.  
 > No API key. No extra cost. Works on every team member's machine instantly.
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-6B46C1?style=for-the-badge&logo=anthropic&logoColor=white)
-![Skills](https://img.shields.io/badge/Skills-10%20Commands-0066CC?style=for-the-badge)
+![Skills](https://img.shields.io/badge/Skills-11%20Commands-0066CC?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux-28A745?style=for-the-badge)
 
 ---
@@ -14,7 +14,7 @@
 1. [What Are Claude Code Skills?](#1-what-are-claude-code-skills)
 2. [Prerequisites](#2-prerequisites)
 3. [Repository Structure](#3-repository-structure)
-4. [The 10 Skills](#4-the-10-skills)
+4. [The 11 Skills](#4-the-11-skills)
 5. [Installation Guide](#5-installation-guide)
 6. [How to Use Each Skill](#6-how-to-use-each-skill)
 7. [How to Create a New Skill](#7-how-to-create-a-new-skill)
@@ -112,7 +112,7 @@ uworld-webgenie-commands/
 
 ---
 
-## 4. The 10 Skills
+## 4. The 11 Skills
 
 | Skill | Command | Role | What It Does |
 |---|---|---|---|
@@ -126,6 +126,7 @@ uworld-webgenie-commands/
 | Feature Table | `/feature-table` | Developers | Generates UWorld comparison table HTML |
 | GDoc to HTML | `/gdoc-to-html` | CMS / Content | Converts pasted Google Doc or Word content to clean UWorld-standard HTML |
 | CWV Audit | `/cwv-audit` | Dev / QA | Core Web Vitals & PageSpeed audit for WordPress/Elementor/WP Rocket — field-data-first optimization plan after page development |
+| Elementor Content Sync | `/elementor-content-sync` | Developers | Merges a new content brief into an existing Elementor JSON export — text only, keeping design, layout, CSS, classes, and IDs 100% identical |
 
 ---
 
@@ -500,6 +501,42 @@ Acts as a senior WordPress performance engineer and produces a prioritized, root
 | URL | Live page URL (the skill fetches the HTML for structural analysis) |
 | PSI data | Attach PageSpeed Insights mobile + desktop — both **field (CrUX)** and **lab (Lighthouse)** — to finalize the scorecard and confirm the LCP element |
 | WP Rocket | Settings export (JSON) recommended to verify Delay JS / RUCSS / cache config |
+
+---
+
+### `/elementor-content-sync` — Content Sync into Existing Elementor JSON
+
+```
+/elementor-content-sync <path-to-elementor-json> <updated-content-brief-or-paste>
+```
+
+**Example:**
+```
+/elementor-content-sync ./cfa-study-planner.json ./new-brief.md
+```
+
+**What it does:**
+
+Merges a new content brief into an existing Elementor page export, changing **only** text/content-bearing fields — every design, layout, CSS, class, ID, and behavior stays byte-for-byte identical. Runs a disciplined pipeline:
+
+1. Mismatch detection — stops if the JSON's real theme conflicts with the brief's theme
+2. Structural inventory via Node.js (never reads the raw minified export line-by-line)
+3. Parses the brief into typed blocks (headings, paragraphs, CTAs, FAQs, testimonials, feature grids)
+4. Maps each block to its best-fit widget by content-type + shape, not just position
+5. Batches every genuine ambiguity into one round of clarifying questions
+6. Applies content-only mutations programmatically (clone-to-grow, never delete-to-shrink)
+7. Validates output JSON and spot-checks mutated fields
+8. Reports change log, intentional no-changes, and a gaps report
+
+**Returns:** A new `<original-name>-UPDATED.json` (never overwrites the source), plus a change log and gaps report.
+
+**Requirements:**
+
+| Requirement | Details |
+|---|---|
+| JSON | Pass the Elementor export as a **file path**, not pasted text (keeps context cheap on large exports) |
+| Brief | Updated content as text, doc, or file path |
+| Scope | Content-only — no design, layout, or CSS changes are ever made |
 
 ---
 
