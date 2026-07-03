@@ -13,7 +13,157 @@ Merge a new content brief into an existing Elementor JSON export, changing **onl
 **Usage:** `/elementor-content-sync <path-to-json> <content-brief-path-or-paste>`
 
 ---
+## Role
+Act as a Senior Elementor / WordPress JSON Developer specializing in maintaining pixel-perfect Elementor designs.
 
+## Objective
+Update an existing Elementor JSON file with new content while preserving the original design, structure, styling, and functionality exactly.
+
+The existing Elementor JSON is the source of truth for design.  
+Only content should be modified.
+
+---
+
+## Core Rules
+
+### 1. Preserve Existing Design
+
+DO NOT modify:
+
+- Sections
+- Containers
+- Widgets
+- Layout structure
+- CSS
+- Classes / IDs
+- Colors
+- Typography
+- Spacing
+- Animations
+- Responsive settings
+- Elementor settings
+- Functionality
+
+Do not redesign, rebuild, optimize, or restructure the page.
+
+Only update content fields.
+
+---
+
+## 2. Content Replacement Rules
+
+Before editing:
+
+1. Analyze the existing Elementor JSON structure.
+2. Understand each section and widget purpose.
+3. Map the new content intelligently to matching existing areas.
+
+Update only:
+
+- Headings
+- Paragraphs
+- Button text / links
+- Cards
+- Feature blocks
+- Lists
+- FAQs
+- Accordions
+- Testimonials
+- Statistics
+- Other text-based content
+
+---
+
+## 3. Handling Extra Content
+
+If the new content contains more items than the existing JSON supports:
+
+Example:
+
+Existing:
+- 5 FAQ items
+
+Updated Content:
+- 10 FAQ items
+
+Action:
+- Duplicate the existing FAQ JSON structure.
+- Add the missing 5 items.
+- Preserve the same:
+  - Design
+  - Classes
+  - Settings
+  - Widget configuration
+
+Apply this duplication logic to:
+
+- Cards
+- Feature sections
+- Lists
+- Testimonials
+- Accordions
+- FAQ items
+- Repeated components
+
+Create new Elementor IDs only for duplicated elements.
+
+---
+
+## 4. Handling Missing Content
+
+If an existing JSON element has no matching updated content:
+
+- Keep the existing element unchanged.
+- Do not remove sections.
+- Do not delete widgets.
+
+---
+
+## 5. JSON Safety Rules
+
+Maintain Elementor compatibility.
+
+Requirements:
+
+- Keep valid JSON formatting.
+- Preserve existing widget IDs whenever possible.
+- Preserve Elementor metadata.
+- Preserve responsive configurations.
+- Preserve dependencies.
+- Avoid unnecessary JSON changes.
+
+The final JSON must import into Elementor without errors.
+
+---
+
+## Final Validation Checklist
+
+Before delivering the updated JSON:
+
+- [ ] Compare original vs updated JSON.
+- [ ] Confirm no design properties changed.
+- [ ] Confirm only content was updated.
+- [ ] Confirm all new content was added.
+- [ ] Confirm duplicated elements match original styling.
+- [ ] Confirm Elementor import works successfully.
+
+---
+
+## Inputs Required
+
+1. Existing Elementor JSON  
+   → Used as design and structure reference.
+
+2. Updated Content Brief  
+   → Used only for replacing content.
+
+---
+
+## Expected Output
+
+Return the updated Elementor JSON file.
+
+The page should look visually identical to the original, with only the content updated.
 ## NON-NEGOTIABLE RULES
 
 1. **Content only.** Never touch `typography_*`, `*_color`, `padding*`, `margin*`, `background_*`, `border_*`, `box_shadow*`, `flex_*`, `width`/`height`, `css_classes`/`_css_classes`, `custom_css`, `_offset_*`, responsive (`_tablet`/`_mobile`) variants, `elType`, `widgetType`, `isInner`, or any `id` (except when cloning — see Phase 4).
